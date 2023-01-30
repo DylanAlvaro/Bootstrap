@@ -3,6 +3,7 @@
 
 #include <list>
 #include <vector>
+#include "Circle.h"
 
 PhysicsScene::PhysicsScene()
 {
@@ -70,12 +71,12 @@ void PhysicsScene::Draw()
 
 bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 {
-	CIRCLE* sphere1 = dynamic_cast<CIRCLE*>(obj1);
-	CIRCLE* sphere2 = dynamic_cast<CIRCLE*>(obj2);
+	Circle* sphere1 = dynamic_cast<Circle*>(obj1);
+	Circle* sphere2 = dynamic_cast<Circle*>(obj2);
 
 	if (sphere1 != nullptr && sphere2 != nullptr)
 	{
 		//TODO the neccesary maths in here
 	}
-
+	return true;
 }
