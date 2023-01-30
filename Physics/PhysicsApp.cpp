@@ -25,15 +25,18 @@ bool PhysicsApp::startup() {
 
 	m_2dRenderer = new aie::Renderer2D();
 
-	// TODO: remember to change this when redistributing a build!
-	// the following path would be used instead: "./font/consolas.ttf"
-	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	
+	m_font = new aie::Font("./font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
 	m_physicsScene->SetTimeStep(0.01);
-
+	
 	DemoStartUp(1);
 
+	Circle* ball;
+	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->AddActor(ball);
+	
 	return true;
 }
 

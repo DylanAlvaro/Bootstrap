@@ -29,6 +29,6 @@ protected:
 	float m_mass;
 	float m_orientation;
 
-	//glm::vec4 m_color;
+	glm::vec4 m_color;
 };
 
