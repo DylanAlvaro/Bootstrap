@@ -9,9 +9,12 @@
 #include "PhysicsScene.h"
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
+#include <vector>
+#include <glm/vec2.hpp>
+
 
 PhysicsApp::PhysicsApp() {
-
+	
 }
 
 PhysicsApp::~PhysicsApp() {
@@ -20,21 +23,47 @@ PhysicsApp::~PhysicsApp() {
 
 bool PhysicsApp::startup() {
 	//increase the 2D line count to maximise the objects we can draw
-	aie::Gizmos::create(225U, 225U, 65535U, 65535U);
+	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
 
 	m_2dRenderer = new aie::Renderer2D();
 
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
-	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	m_font = new aie::Font("./font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetTimeStep(0.01);
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
+	m_physicsScene->SetTimeStep(0.01f);
 
-	DemoStartUp(1);
-
+	Circle* ball;
+	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->AddActor(ball);
 	return true;
+	
+	//DemoStartUp(1);
+
+	//Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	//Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	//
+	//m_physicsScene->AddActor(ball1);
+	//m_physicsScene->AddActor(ball2);
+	//
+	//ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
+
+
+	//m_physicsScene->SetGravity(glm::vec2(0, 0));
+	//
+	//Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	//Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	//
+	//m_physicsScene->AddActor(ball1);
+	//m_physicsScene->AddActor(ball2);
+	//
+	//ball1->ApplyForce(glm::vec2(30, 0));
+	//ball2->ApplyForce(glm::vec2(-15, 0));
+
+
 }
 
 void PhysicsApp::shutdown() {
@@ -70,6 +99,7 @@ void PhysicsApp::draw() {
 
 	// draw your stuff here!
 	static float aspectRatio = 16 / 9;
+	
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.f, 1.f));
 	

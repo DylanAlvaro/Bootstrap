@@ -35,16 +35,12 @@ void PhysicsScene::Update(float dt)
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
-	while (accumulatedTime >= m_timeStep)
-	{
-		for (auto pActor : m_actors)
-		{
+	while (accumulatedTime >= m_timeStep) {
+		for (auto pActor : m_actors) {
 			pActor->FixedUpdate(m_gravity, m_timeStep);
 		}
-
 		accumulatedTime -= m_timeStep;
 
-		//checking for collisions
 		int actorCount = m_actors.size();
 
 		for (int outer = 0; outer < actorCount - 1; outer++)
@@ -53,7 +49,7 @@ void PhysicsScene::Update(float dt)
 			{
 				PhysicsObject* object1 = m_actors[outer];
 				PhysicsObject* object2 = m_actors[inner];
-
+				
 				Circle2Circle(object1, object2);
 			}
 		}
@@ -64,7 +60,7 @@ void PhysicsScene::Draw()
 {
 	for (auto pActor : m_actors)
 	{
-		pActor->Draw(1);
+		pActor->Draw();
 	}
 	
 }
@@ -76,7 +72,8 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 
 	if (sphere1 != nullptr && sphere2 != nullptr)
 	{
-		//TODO the neccesary maths in here
+		// TODO do the necessary maths in here
+		// TODO if the Circles touch, set their velocities to zero for now
 	}
 	return true;
 }
