@@ -8,7 +8,11 @@ Circle::Circle(glm::vec2 position, glm::vec2 velocity, float mass, float radius,
 	m_color = color;
 }
 
+Circle::~Circle()
+{
+}
+
 void Circle::Draw(float alpha)
 {
-	aie::Gizmos::add2DCircle(m_position, m_radius, 12, m_color);
+	aie::Gizmos::add2DCircle(glm::vec2(m_position), m_radius, 12, m_color);
 }

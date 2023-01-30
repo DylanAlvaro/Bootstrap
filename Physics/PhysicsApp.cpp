@@ -9,9 +9,12 @@
 #include "PhysicsScene.h"
 #include <glm/ext.hpp>
 #include <glm/glm.hpp>
+#include <vector>
+#include <glm/vec2.hpp>
+
 
 PhysicsApp::PhysicsApp() {
-
+	
 }
 
 PhysicsApp::~PhysicsApp() {
@@ -20,10 +23,11 @@ PhysicsApp::~PhysicsApp() {
 
 bool PhysicsApp::startup() {
 	//increase the 2D line count to maximise the objects we can draw
-	aie::Gizmos::create(225U, 225U, 65535U, 65535U);
+	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
 
 	m_2dRenderer = new aie::Renderer2D();
+
 
 	
 	m_font = new aie::Font("./font/consolas.ttf", 32);
@@ -36,7 +40,7 @@ bool PhysicsApp::startup() {
 	Circle* ball;
 	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
 	m_physicsScene->AddActor(ball);
-	
+
 	return true;
 }
 
@@ -73,6 +77,7 @@ void PhysicsApp::draw() {
 
 	// draw your stuff here!
 	static float aspectRatio = 16 / 9;
+	
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.f, 1.f));
 	

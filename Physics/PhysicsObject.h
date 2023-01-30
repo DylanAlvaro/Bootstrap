@@ -14,8 +14,10 @@ protected:
 public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 
-	virtual void Draw(float alpha) = 0;
+	virtual void Draw() = 0;
 	virtual void ResetPosition() {};
+	//float GetShapeID() { return m_shapeID; }
+
 
 	ShapeType GetShapeID() { return m_shapeID; }
 
