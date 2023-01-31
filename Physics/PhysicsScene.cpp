@@ -4,6 +4,8 @@
 #include <list>
 #include <vector>
 #include "Circle.h"
+#include "Input.h"
+#include "Plane.h"
 
 PhysicsScene::PhysicsScene()
 {
@@ -30,6 +32,10 @@ void PhysicsScene::RemoveActor(PhysicsObject* actor)
 	}
 }
 
+void PhysicsScene::CheckForCollision()
+{
+}
+
 bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 {
 	Circle* sphere1 = dynamic_cast<Circle*>(obj1);
@@ -45,9 +51,54 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 	return true;
 }
 
+bool PhysicsScene::Plane2Plane(PhysicsObject*, PhysicsObject*)
+{
+	//no math required just return false ( i think ) 
+	return false;
+}
+
+bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	Circle* circle = dynamic_cast<Circle*>(obj1);
+	Plane* plane = dynamic_cast<Plane*>(obj2);
+
+	if (circle != nullptr && plane != nullptr)
+	{
+		glm::vec2 collisionNormal = plane->GetNormal();
+		float sphereToPlane = glm::dot(circle->GetPosition(), plane->GetNormal());
+
+		float intersection = circle->GetRadius() - sphereToPlane;
+		float velocityOutOfPlane = glm::dot(circle->GetVelocity(), plane->GetNormal());
+
+		if (intersection > 0 && velocityOutOfPlane < 0)
+		{
+			circle->ApplyForce(-circle->GetVelocity() * circle->GetMass());
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool PhysicsScene::Plane2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	return Circle2Plane(obj2, obj1);
+}
+
+typedef bool(*fn)(PhysicsObject*, PhysicsObject*);
+
+static fn collisionFunctionArray[] =
+{
+	PhysicsScene::Plane2Plane, PhysicsScene::Plane2Circle,
+	PhysicsScene::Circle2Plane, PhysicsScene::Circle2Circle,
+};
+
 
 void PhysicsScene::Update(float dt)
 {
+	aie::Input* input = aie::Input::getInstance();
+	int SHAPE_COUNT = 3;
+
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
@@ -65,11 +116,24 @@ void PhysicsScene::Update(float dt)
 			{
 				PhysicsObject* object1 = m_actors[outer];
 				PhysicsObject* object2 = m_actors[inner];
+				int shapeId1 = object1->GetShapeID();
+				int shapeId2 = object2->GetShapeID();
+
+				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
+				fn collisionFunctionPtr = collisionFunctionArray[functionIdx];
+				if (collisionFunctionPtr != nullptr)
+					collisionFunctionPtr(object1, object2);
 				
 				if (Circle2Circle(object1, object2))
 				{
-					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity() * -dynamic_cast<Circle*>(object2)->GetMass());
-					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity() * -dynamic_cast<Circle*>(object1)->GetMass());
+					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity() * -dynamic_cast<Circle*>(object2)->GetMass()); // get rid of everything after the * for newtons third to work
+					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity() * -dynamic_cast<Circle*>(object1)->GetMass()); // same here
+				}
+
+				if (input->isKeyDown(aie::INPUT_KEY_D))
+				{
+					dynamic_cast<Circle*>(object1)->ApplyForce(glm::vec2(30, 0));
+					dynamic_cast<Circle*>(object2)->ApplyForce(glm::vec2(-30, 0));
 				}
 			}
 		}

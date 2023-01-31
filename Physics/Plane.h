@@ -1,5 +1,6 @@
 #pragma once
 #include "PhysicsObject.h"
+#include <glm/glm.hpp>
 
 class Plane : public PhysicsObject
 {
@@ -17,5 +18,6 @@ public:
 protected:
 	glm::vec2 m_normal;
 	float m_distanceToOrigin;
+	glm::vec4 m_color;
 };
 

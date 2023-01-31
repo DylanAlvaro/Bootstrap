@@ -5,6 +5,7 @@
 #include "Gizmos.h"
 #include "Demo.h"
 #include "Circle.h"
+#include "Plane.h"
 
 #include "PhysicsScene.h"
 #include <glm/ext.hpp>
@@ -37,7 +38,7 @@ bool PhysicsApp::startup()
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetGravity(glm::vec2(0,0));
+	m_physicsScene->SetGravity(glm::vec2(0,-9.82f));
 	m_physicsScene->SetTimeStep(0.01f);
 	
 	DemoStartUp(1);
@@ -57,14 +58,23 @@ bool PhysicsApp::startup()
 	//ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
 
 	//activity 4
+	//Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	//Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	//
+	//m_physicsScene->AddActor(ball1);
+	//m_physicsScene->AddActor(ball2);
+	//
+	//ball1->ApplyForce(glm::vec2(30, 0));
+	//ball2->ApplyForce(glm::vec2(-15, 0));
+
 	Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
 	Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
 
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(plane);
 
-	ball1->ApplyForce(glm::vec2(30, 0));
-	ball2->ApplyForce(glm::vec2(-15, 0));
 	return true;
 }
 
@@ -118,12 +128,19 @@ void PhysicsApp::draw()
 
 void PhysicsApp::DemoStartUp(int num)
 {
+	Circle* ball;
 #ifdef NewtownsFirstLaw
 	m_physicsScene->SetGravity(glm::vec2(0));
+	
+	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->AddActor(ball);
 #endif 
 
 #ifdef NewtownsSecondLaw
 	m_physicsScene->SetGravity(glm::vec2(0, -10));
+	
+	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	m_physicsScene->AddActor(ball);
 #endif 
 #ifdef NewtownsThirdLaw
 	m_physicsScene->SetGravity(glm::vec2(-2, 0));
@@ -138,6 +155,7 @@ void PhysicsApp::DemoStartUp(int num)
 
 void PhysicsApp::DemoUpdates(aie::Input* input, float dt)
 {
+
 }
 
 float PhysicsApp::DegreeToRadian(float degree)

@@ -14,6 +14,7 @@ public:
 	void RemoveActor(PhysicsObject* actor);
 	void Update(float dt);
 	void Draw();
+	void DebugScene();
 
 	//Getters
 	glm::vec2 GetGravity() { return m_gravity; }
@@ -23,7 +24,12 @@ public:
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 
+	void CheckForCollision();
+
 	static bool Circle2Circle(PhysicsObject*, PhysicsObject*);
+	static bool Plane2Plane(PhysicsObject*, PhysicsObject*);
+	static bool Circle2Plane(PhysicsObject*, PhysicsObject*);
+	static bool Plane2Circle(PhysicsObject*, PhysicsObject*);
 
 private:
 	glm::vec2 m_gravity;
