@@ -30,6 +30,22 @@ void PhysicsScene::RemoveActor(PhysicsObject* actor)
 	}
 }
 
+bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
+{
+	Circle* sphere1 = dynamic_cast<Circle*>(obj1);
+	Circle* sphere2 = dynamic_cast<Circle*>(obj2);
+
+	if (sphere1 != nullptr && sphere2 != nullptr)
+	{
+		// TODO do the necessary maths in here
+		// TODO if the Circles touch, set their velocities to zero for now
+
+		return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius(), sphere2->GetRadius());
+	}
+	return true;
+}
+
+
 void PhysicsScene::Update(float dt)
 {
 	static float accumulatedTime = 0.0f;
@@ -50,7 +66,11 @@ void PhysicsScene::Update(float dt)
 				PhysicsObject* object1 = m_actors[outer];
 				PhysicsObject* object2 = m_actors[inner];
 				
-				Circle2Circle(object1, object2);
+				if (Circle2Circle(object1, object2))
+				{
+					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity());
+					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity());
+				}
 			}
 		}
 	}
@@ -60,20 +80,8 @@ void PhysicsScene::Draw()
 {
 	for (auto pActor : m_actors)
 	{
-		pActor->Draw();
+		pActor->Draw(1);
 	}
 	
 }
 
-bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
-{
-	Circle* sphere1 = dynamic_cast<Circle*>(obj1);
-	Circle* sphere2 = dynamic_cast<Circle*>(obj2);
-
-	if (sphere1 != nullptr && sphere2 != nullptr)
-	{
-		// TODO do the necessary maths in here
-		// TODO if the Circles touch, set their velocities to zero for now
-	}
-	return true;
-}

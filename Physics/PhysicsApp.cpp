@@ -12,16 +12,21 @@
 #include <vector>
 #include <glm/vec2.hpp>
 
+#include "Rigidbody.h"
 
-PhysicsApp::PhysicsApp() {
+
+PhysicsApp::PhysicsApp() 
+{
 	
 }
 
-PhysicsApp::~PhysicsApp() {
+PhysicsApp::~PhysicsApp() 
+{
 
 }
 
-bool PhysicsApp::startup() {
+bool PhysicsApp::startup() 
+{
 	//increase the 2D line count to maximise the objects we can draw
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
@@ -29,28 +34,38 @@ bool PhysicsApp::startup() {
 	m_2dRenderer = new aie::Renderer2D();
 
 
-	
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 
 	m_physicsScene = new PhysicsScene();
-	m_physicsScene->SetTimeStep(0.01);
+	m_physicsScene->SetGravity(glm::vec2(0,0));
+	m_physicsScene->SetTimeStep(0.01f);
 	
 	DemoStartUp(1);
 
-	Circle* ball;
-	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
-	m_physicsScene->AddActor(ball);
+	//Circle* ball;
+	//ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	//
+	//m_physicsScene->AddActor(ball);
 
+	Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+	
+	ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
 	return true;
 }
 
-void PhysicsApp::shutdown() {
+void PhysicsApp::shutdown() 
+{
 
 	delete m_font;
 	delete m_2dRenderer;
 }
 
-void PhysicsApp::update(float deltaTime) {
+void PhysicsApp::update(float deltaTime) 
+{
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
@@ -65,9 +80,11 @@ void PhysicsApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
 }
 
-void PhysicsApp::draw() {
+void PhysicsApp::draw() 
+{
 
 	// wipe the screen to the background colour
 	clearScreen();
@@ -92,7 +109,19 @@ void PhysicsApp::DemoStartUp(int num)
 {
 #ifdef NewtownsFirstLaw
 	m_physicsScene->SetGravity(glm::vec2(0));
-#endif // NewTownsFirstLaw
+#endif 
+
+#ifdef NewtownsSecondLaw
+	m_physicsScene->SetGravity(glm::vec2(0, -10));
+#endif 
+#ifdef NewtownsThirdLaw
+	m_physicsScene->SetGravity(glm::vec2(-2, 0));
+#endif 
+#ifdef SimulatingCollision
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
+#endif 
+
+
 
 }
 

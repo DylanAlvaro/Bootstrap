@@ -2,8 +2,10 @@
 
 #define PI 3.14159265359
 
-#define NewtownsFirstLaw
+//#define NewtownsFirstLaw
+//#define NewtownsSecondLaw
+#define NewtownsThirdLaw
+//#define SimulatingCollision
+//#define SimulatingRocket
 
 
-
-#define SimulatingRocket
