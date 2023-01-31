@@ -4,8 +4,8 @@
 
 //#define NewtownsFirstLaw
 //#define NewtownsSecondLaw
-#define NewtownsThirdLaw
-//#define SimulatingCollision
+//#define NewtownsThirdLaw
+#define SimulatingCollision
 //#define SimulatingRocket
 
 

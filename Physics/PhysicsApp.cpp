@@ -41,19 +41,30 @@ bool PhysicsApp::startup()
 	m_physicsScene->SetTimeStep(0.01f);
 	
 	DemoStartUp(1);
-
+	//activity 1
 	//Circle* ball;
 	//ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
 	//
 	//m_physicsScene->AddActor(ball);
-
-	Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
 	
+	//activity 3
+	//Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	//Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	//
+	//m_physicsScene->AddActor(ball1);
+	//m_physicsScene->AddActor(ball2);
+	//
+	//ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
+
+	//activity 4
+	Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
-	
-	ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
+
+	ball1->ApplyForce(glm::vec2(30, 0));
+	ball2->ApplyForce(glm::vec2(-15, 0));
 	return true;
 }
 

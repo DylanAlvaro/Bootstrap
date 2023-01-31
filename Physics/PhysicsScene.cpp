@@ -40,7 +40,7 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 		// TODO do the necessary maths in here
 		// TODO if the Circles touch, set their velocities to zero for now
 
-		return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius(), sphere2->GetRadius());
+		return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius() +  sphere2->GetRadius());
 	}
 	return true;
 }
@@ -68,8 +68,8 @@ void PhysicsScene::Update(float dt)
 				
 				if (Circle2Circle(object1, object2))
 				{
-					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity());
-					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity());
+					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity() * -dynamic_cast<Circle*>(object2)->GetMass());
+					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity() * -dynamic_cast<Circle*>(object1)->GetMass());
 				}
 			}
 		}
