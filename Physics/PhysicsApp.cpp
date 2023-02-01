@@ -48,15 +48,7 @@ bool PhysicsApp::startup()
 	//
 	//m_physicsScene->AddActor(ball);
 	
-	//activity 3
-	//Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	//Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
-	//
-	//m_physicsScene->AddActor(ball1);
-	//m_physicsScene->AddActor(ball2);
-	//
-	//ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
-
+	
 	//activity 4
 	//Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
 	//Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
@@ -67,13 +59,6 @@ bool PhysicsApp::startup()
 	//ball1->ApplyForce(glm::vec2(30, 0));
 	//ball2->ApplyForce(glm::vec2(-15, 0));
 
-	Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
-	Plane* plane = new Plane(glm::vec2(0, 1), -30);
-
-	m_physicsScene->AddActor(ball1);
-	m_physicsScene->AddActor(ball2);
-	m_physicsScene->AddActor(plane);
 
 	return true;
 }
@@ -128,7 +113,7 @@ void PhysicsApp::draw()
 
 void PhysicsApp::DemoStartUp(int num)
 {
-	Circle* ball;
+
 #ifdef NewtownsFirstLaw
 	m_physicsScene->SetGravity(glm::vec2(0));
 	
@@ -139,18 +124,48 @@ void PhysicsApp::DemoStartUp(int num)
 #ifdef NewtownsSecondLaw
 	m_physicsScene->SetGravity(glm::vec2(0, -10));
 	
-	ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
+	Circle* ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
 	m_physicsScene->AddActor(ball);
 #endif 
 #ifdef NewtownsThirdLaw
 	m_physicsScene->SetGravity(glm::vec2(-2, 0));
+
+	//activity 3
+	Circle* ball1 = new Circle(glm::vec2(-4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(4, 0), glm::vec2(0, 0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+	
+	ball1->ApplyForceToActor(ball2, glm::vec2(-2, 0));
+
 #endif 
 #ifdef SimulatingCollision
 	m_physicsScene->SetGravity(glm::vec2(0, 0));
+
+	//activity 4
+	Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+	
+	ball1->ApplyForce(glm::vec2(30, 0));
+	ball2->ApplyForce(glm::vec2(-15, 0));
 #endif 
 
+#ifdef CollisionDetection
+	
+	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
 
+	Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Plane* plane = new Plane(glm::vec2(0, 1), -30);
 
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(plane);
+#endif 
 }
 
 void PhysicsApp::DemoUpdates(aie::Input* input, float dt)

@@ -6,11 +6,11 @@ enum ShapeType {
 	CIRCLE, 
 	BOX
 };
+const int SHAPE_COUNT = 3;
 
 class PhysicsObject {
 protected:
-	PhysicsObject(ShapeType a_shapeID);
-
+	PhysicsObject(ShapeType a_shapeID) : m_shapeID(a_shapeID) {};
 public:
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep) = 0;
 

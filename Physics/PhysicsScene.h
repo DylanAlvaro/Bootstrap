@@ -24,6 +24,8 @@ public:
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 
+
+
 	void CheckForCollision();
 
 	static bool Circle2Circle(PhysicsObject*, PhysicsObject*);

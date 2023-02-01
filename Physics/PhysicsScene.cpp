@@ -45,10 +45,18 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		// TODO do the necessary maths in here
 		// TODO if the Circles touch, set their velocities to zero for now
+		glm::vec2 dist = sphere1->GetPosition() - sphere2->GetPosition();
+		if (glm::length(dist) < sphere1->GetRadius() + sphere2->GetRadius())
+		{
+			sphere1->SetVelocity(glm::vec2(0, 0));
+			sphere2->SetVelocity(glm::vec2(0, 0));
+			return true;
 
-		return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius() +  sphere2->GetRadius());
+		}
+
+		//return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius() +  sphere2->GetRadius());
 	}
-	return true;
+	return false;
 }
 
 bool PhysicsScene::Plane2Plane(PhysicsObject*, PhysicsObject*)
@@ -65,7 +73,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	if (circle != nullptr && plane != nullptr)
 	{
 		glm::vec2 collisionNormal = plane->GetNormal();
-		float sphereToPlane = glm::dot(circle->GetPosition(), plane->GetNormal());
+		float sphereToPlane = glm::dot(circle->GetPosition(), plane->GetNormal()) - plane->GetDistance();
 
 		float intersection = circle->GetRadius() - sphereToPlane;
 		float velocityOutOfPlane = glm::dot(circle->GetVelocity(), plane->GetNormal());
@@ -97,7 +105,7 @@ static fn collisionFunctionArray[] =
 void PhysicsScene::Update(float dt)
 {
 	aie::Input* input = aie::Input::getInstance();
-	int SHAPE_COUNT = 3;
+	
 
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
@@ -119,22 +127,24 @@ void PhysicsScene::Update(float dt)
 				int shapeId1 = object1->GetShapeID();
 				int shapeId2 = object2->GetShapeID();
 
-				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
+ 				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
 				fn collisionFunctionPtr = collisionFunctionArray[functionIdx];
 				if (collisionFunctionPtr != nullptr)
+				{
 					collisionFunctionPtr(object1, object2);
+				}
 				
-				if (Circle2Circle(object1, object2))
-				{
-					dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity() * -dynamic_cast<Circle*>(object2)->GetMass()); // get rid of everything after the * for newtons third to work
-					dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity() * -dynamic_cast<Circle*>(object1)->GetMass()); // same here
-				}
-
-				if (input->isKeyDown(aie::INPUT_KEY_D))
-				{
-					dynamic_cast<Circle*>(object1)->ApplyForce(glm::vec2(30, 0));
-					dynamic_cast<Circle*>(object2)->ApplyForce(glm::vec2(-30, 0));
-				}
+				//if (Circle2Circle(object1, object2))
+				//{
+				//	dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity()); // get rid of everything after the * for newtons third to work
+				//	dynamic_cast<Circle*>(object2)->ApplyForce(dynamic_cast<Circle*>(object2)->GetVelocity()); // same here
+				//}
+				//
+				//if (input->isKeyDown(aie::INPUT_KEY_D))
+				//{
+				//	dynamic_cast<Circle*>(object1)->ApplyForce(glm::vec2(30, 0));
+				//	dynamic_cast<Circle*>(object2)->ApplyForce(glm::vec2(-30, 0));
+				//}
 			}
 		}
 	}
