@@ -1,6 +1,7 @@
 #include "Plane.h"
 #include "Gizmos.h"
 #include <glm/glm.hpp>
+#include <iostream>
 
 Plane::Plane(glm::vec2 normal, float distance) : PhysicsObject(ShapeType::PLANE)
 {
@@ -33,3 +34,27 @@ void Plane::Draw(float alpha)
 void Plane::ResetPosition()
 {
 }
+
+//void Plane::ResolveCollision(Rigidbody* actor2)
+//{
+//	glm::vec2 normal = glm::normalize(actor2->GetPosition() - m_position);
+//	glm::vec2 relativeVelocity = actor2->GetVelocity() - m_distanceToOrigin;
+//
+//	if (glm::dot(normal, relativeVelocity) >= 0)
+//		return;
+//
+//	float elasticity = 1;
+//	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / ((1 / GetMass()) + (1 / actor2->GetMass()));
+//
+//	glm::vec2 force = normal * j;
+//
+//	float kePre = GetKineticEnergy() + actor2->GetKineticEnergy();
+//
+//	ApplyForceToActor(actor2, -force);
+//
+//	float kePost = GetKineticEnergy() + actor2->GetKineticEnergy();
+//
+//	float deltaKE = kePost - kePre;
+//	if (deltaKE > kePost * 0.1f)
+//		std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
+//}

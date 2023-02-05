@@ -24,7 +24,7 @@ public:
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 
-
+	const int SHAPE_COUNT = 3;
 
 	void CheckForCollision();
 

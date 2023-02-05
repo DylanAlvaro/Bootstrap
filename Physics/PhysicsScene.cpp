@@ -43,13 +43,16 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 
 	if (sphere1 != nullptr && sphere2 != nullptr)
 	{
-		// TODO do the necessary maths in here
-		// TODO if the Circles touch, set their velocities to zero for now
 		glm::vec2 dist = sphere1->GetPosition() - sphere2->GetPosition();
-		if (glm::length(dist) < sphere1->GetRadius() + sphere2->GetRadius())
+
+		if (glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) <= sphere1->GetRadius() + sphere2->GetRadius())
+
+			//if (glm::length(dist) < sphere1->GetRadius() + sphere2->GetRadius())
 		{
-			sphere1->SetVelocity(glm::vec2(0, 0));
-			sphere2->SetVelocity(glm::vec2(0, 0));
+			//sphere1->SetVelocity(glm::vec2(0, 0));
+			//sphere2->SetVelocity(glm::vec2(0, 0));
+
+			sphere1->ResolveCollision(sphere2);
 			return true;
 
 		}
@@ -73,6 +76,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	if (circle != nullptr && plane != nullptr)
 	{
 		glm::vec2 collisionNormal = plane->GetNormal();
+		//glm::vec2 contact = circle->GetPosition() + (collisionNormal * -circle->GetRadius());
 		float sphereToPlane = glm::dot(circle->GetPosition(), plane->GetNormal()) - plane->GetDistance();
 
 		float intersection = circle->GetRadius() - sphereToPlane;
@@ -80,6 +84,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
+			//plane->ResolveCollision(circle, contact);
 			circle->ApplyForce(-circle->GetVelocity() * circle->GetMass());
 			return true;
 		}
@@ -105,15 +110,18 @@ static fn collisionFunctionArray[] =
 void PhysicsScene::Update(float dt)
 {
 	aie::Input* input = aie::Input::getInstance();
-	
+
 
 	static float accumulatedTime = 0.0f;
 	accumulatedTime += dt;
 
-	while (accumulatedTime >= m_timeStep) {
-		for (auto pActor : m_actors) {
+	while (accumulatedTime >= m_timeStep) 
+	{
+		for (auto pActor : m_actors) 
+		{
 			pActor->FixedUpdate(m_gravity, m_timeStep);
 		}
+
 		accumulatedTime -= m_timeStep;
 
 		int actorCount = m_actors.size();
@@ -127,13 +135,14 @@ void PhysicsScene::Update(float dt)
 				int shapeId1 = object1->GetShapeID();
 				int shapeId2 = object2->GetShapeID();
 
- 				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
+				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
 				fn collisionFunctionPtr = collisionFunctionArray[functionIdx];
+				
 				if (collisionFunctionPtr != nullptr)
 				{
 					collisionFunctionPtr(object1, object2);
 				}
-				
+
 				//if (Circle2Circle(object1, object2))
 				//{
 				//	dynamic_cast<Circle*>(object1)->ApplyForce(dynamic_cast<Circle*>(object1)->GetVelocity()); // get rid of everything after the * for newtons third to work

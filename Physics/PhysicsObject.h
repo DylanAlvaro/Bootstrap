@@ -6,7 +6,6 @@ enum ShapeType {
 	CIRCLE, 
 	BOX
 };
-const int SHAPE_COUNT = 3;
 
 class PhysicsObject {
 protected:

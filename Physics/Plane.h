@@ -1,6 +1,7 @@
 #pragma once
 #include "PhysicsObject.h"
 #include <glm/glm.hpp>
+#include "Rigidbody.h"
 
 class Plane : public PhysicsObject
 {
@@ -14,6 +15,10 @@ public:
 
 	glm::vec2 GetNormal() { return m_normal; }
 	float GetDistance() { return m_distanceToOrigin; }
+
+	float GetKineticEnergy();
+
+	void ResolveCollision(Rigidbody* actor2);
 
 protected:
 	glm::vec2 m_normal;
