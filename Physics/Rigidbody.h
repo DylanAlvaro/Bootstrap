@@ -13,21 +13,23 @@ public:
 
 	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 	
-	void ApplyForce(glm::vec2 force);
+	void ApplyForce(glm::vec2 force, glm::vec2 pos);
 	void ApplyForceToActor(Rigidbody* actor2, glm::vec2 force);
-	void ResolveCollision(Rigidbody* actor2);
-	
+	void ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr);
+	void CalculateAxes();
+
 	//getters
 	glm::vec2 GetPosition() { return m_position; }
 	float GetOrientation() { return m_orientation; }
 	glm::vec2 GetVelocity() { return m_velocity; }
 	float GetMass() { return m_mass; }
-
+	float GetMoment() { return m_moment; }
 	virtual float GetKineticEnergy();
-
 	float GetPotentialEnergy();
 
-	
+	void CalculateSmoothedPosition(float alpha);
+
+	virtual float GetEnergy();
 
 	//setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
@@ -43,6 +45,15 @@ protected:
 	glm::vec2 m_gravity;
 	glm::vec4 m_color;
 	
+	glm::vec2 m_lastPosition;
+	
+	glm::vec2 m_smoothedPosition;
+	glm::vec2 m_smoothedLocalX;
+	glm::vec2 m_smoothedLocalY;
+
+	glm::vec2 m_localX;
+	glm::vec2 m_localY;
+
 	
 	float m_mass;
 	float m_kinetic;

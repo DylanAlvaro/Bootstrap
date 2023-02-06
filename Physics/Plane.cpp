@@ -41,22 +41,30 @@ float Plane::GetKineticEnergy()
 	return 0.0f;
 }
 
-void Plane::ResolveCollision(Rigidbody* actor2)
+void Plane::ResolveCollision(Rigidbody* actor2, glm::vec2 contact)
 {
-	glm::vec2 relativeVelocity = actor2->GetVelocity();
+	glm::vec2 vRel = actor2->GetVelocity();
+	float e = 1;
+	float j = glm::dot(-(1 + e) * (vRel), m_normal) / (1 / actor2->GetMass());
 
-	float elasticity = 1;
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
+	glm::vec2 force = m_normal * j;
 
-	glm::vec2 force = GetNormal() * j;
+	actor2->ApplyForce(force, contact - actor2->GetPosition());
 
-	float kePre = actor2->GetKineticEnergy();
-
-	actor2->ApplyForce(force);
-
-	float kePost = actor2->GetKineticEnergy();
-
-	float deltaKE = kePost - kePre;
-	if (deltaKE > kePost * 0.01f)
-		std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
+	//glm::vec2 relativeVelocity = actor2->GetVelocity();
+	//
+	//float elasticity = 1;
+	//float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
+	//
+	//glm::vec2 force = GetNormal() * j;
+	//
+	//float kePre = actor2->GetKineticEnergy();
+	//
+	//actor2->ApplyForce(force);
+	//
+	//float kePost = actor2->GetKineticEnergy();
+	//
+	//float deltaKE = kePost - kePre;
+	//if (deltaKE > kePost * 0.01f)
+	//	std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
 }

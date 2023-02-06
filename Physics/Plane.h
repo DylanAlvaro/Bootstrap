@@ -18,7 +18,7 @@ public:
 
 	virtual float GetKineticEnergy();
 
-	void ResolveCollision(Rigidbody* actor2);
+	void ResolveCollision(Rigidbody* actor2, glm::vec2 contact);
 
 protected:
 	glm::vec2 m_normal;

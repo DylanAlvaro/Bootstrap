@@ -46,8 +46,7 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 		float dist = distance(circle1->GetPosition(), circle2->GetPosition());
 		if (glm::length(dist) < circle1->GetRadius() + circle2->GetRadius()) 
 		{
-			circle1->ResolveCollision(circle2);
-			circle2->ResolveCollision(circle1);
+			circle1->ResolveCollision(circle2, 0.5f * (circle1->GetPosition() + circle2->GetPosition()));
 			return true;
 			}
 	}
@@ -76,7 +75,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
-			plane->ResolveCollision(circle);
+			plane->ResolveCollision(circle, contact);
 			return true;
 		}
 	}
