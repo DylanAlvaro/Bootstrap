@@ -10,9 +10,12 @@ public:
 	virtual void Draw(float alpha);
 
 	glm::vec4 GetColor() { return m_color; }
+	glm::vec2 GetExtents() { return m_extends; }
+
 
 protected:
 
 	glm::vec2 m_extends;
+
 };
 

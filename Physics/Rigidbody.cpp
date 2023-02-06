@@ -42,11 +42,7 @@ void Rigidbody::ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2
 	glm::vec2 normal = glm::normalize(collisionNormal ? *collisionNormal : actor2->m_position - m_position);
 
 	glm::vec2 perp(normal.y - normal.x);
-	//glm::vec2 relativeVelocity = actor2->GetVelocity() - m_velocity;
-
-	//if (glm::dot(normal, relativeVelocity) >= 0)
-	//	return;
-
+	
 	float r1 = glm::dot(contact - m_position, -perp);
 	float r2 = glm::dot(contact - actor2->m_position, perp);
 

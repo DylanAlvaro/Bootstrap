@@ -32,10 +32,13 @@ public:
 	static bool Plane2Plane(PhysicsObject*, PhysicsObject*);
 	static bool Circle2Plane(PhysicsObject*, PhysicsObject*);
 	static bool Plane2Circle(PhysicsObject*, PhysicsObject*);
+	static bool Plane2Box(PhysicsObject*, PhysicsObject*);
 
 private:
 	static glm::vec2 m_gravity;
 	float m_timeStep;
 	std::vector<PhysicsObject*> m_actors;
+
+	glm::vec2 m_extents;
 };
 
