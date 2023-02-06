@@ -5,10 +5,9 @@
 //#define NewtownsFirstLaw
 //#define NewtownsSecondLaw
 //#define NewtownsThirdLaw
-#define SimulatingCollision
+//#define SimulatingCollision
 //#define SimulatingRocket
 //#define CollisionDetection
-//#define Circle2Circle
-//#define Circle2Plane
+#define CollisionResolution
 
 

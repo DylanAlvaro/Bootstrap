@@ -7,10 +7,11 @@
 #include "Input.h"
 #include "Plane.h"
 
+glm::vec2 PhysicsScene::m_gravity = glm::vec2(0);
+
 PhysicsScene::PhysicsScene()
 {
 	m_timeStep = 0.01f;
-	m_gravity = glm::vec2(0);
 }
 
 PhysicsScene::~PhysicsScene()
@@ -38,26 +39,17 @@ void PhysicsScene::CheckForCollision()
 
 bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 {
-	Circle* sphere1 = dynamic_cast<Circle*>(obj1);
-	Circle* sphere2 = dynamic_cast<Circle*>(obj2);
-
-	if (sphere1 != nullptr && sphere2 != nullptr)
+	Circle* circle1 = dynamic_cast<Circle*>(obj1);
+	Circle* circle2 = dynamic_cast<Circle*>(obj2);
+	if (circle1 != nullptr && circle2 != nullptr) 
 	{
-		glm::vec2 dist = sphere1->GetPosition() - sphere2->GetPosition();
-
-		if (glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) <= sphere1->GetRadius() + sphere2->GetRadius())
-
-			//if (glm::length(dist) < sphere1->GetRadius() + sphere2->GetRadius())
+		float dist = distance(circle1->GetPosition(), circle2->GetPosition());
+		if (glm::length(dist) < circle1->GetRadius() + circle2->GetRadius()) 
 		{
-			//sphere1->SetVelocity(glm::vec2(0, 0));
-			//sphere2->SetVelocity(glm::vec2(0, 0));
-
-			sphere1->ResolveCollision(sphere2);
+			circle1->ResolveCollision(circle2);
+			circle2->ResolveCollision(circle1);
 			return true;
-
-		}
-
-		//return(glm::distance(sphere1->GetPosition(), sphere2->GetPosition()) < sphere1->GetRadius() +  sphere2->GetRadius());
+			}
 	}
 	return false;
 }
@@ -76,7 +68,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 	if (circle != nullptr && plane != nullptr)
 	{
 		glm::vec2 collisionNormal = plane->GetNormal();
-		//glm::vec2 contact = circle->GetPosition() + (collisionNormal * -circle->GetRadius());
+		glm::vec2 contact = circle->GetPosition() + (collisionNormal * -circle->GetRadius());
 		float sphereToPlane = glm::dot(circle->GetPosition(), plane->GetNormal()) - plane->GetDistance();
 
 		float intersection = circle->GetRadius() - sphereToPlane;
@@ -84,8 +76,7 @@ bool PhysicsScene::Circle2Plane(PhysicsObject* obj1, PhysicsObject* obj2)
 
 		if (intersection > 0 && velocityOutOfPlane < 0)
 		{
-			//plane->ResolveCollision(circle, contact);
-			circle->ApplyForce(-circle->GetVelocity() * circle->GetMass());
+			plane->ResolveCollision(circle);
 			return true;
 		}
 	}
@@ -136,6 +127,7 @@ void PhysicsScene::Update(float dt)
 				int shapeId2 = object2->GetShapeID();
 
 				int functionIdx = (shapeId1 * SHAPE_COUNT) + shapeId2;
+
 				fn collisionFunctionPtr = collisionFunctionArray[functionIdx];
 				
 				if (collisionFunctionPtr != nullptr)

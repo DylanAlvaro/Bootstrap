@@ -1,5 +1,6 @@
 #include "Rigidbody.h"
 #include <iostream>
+#include "PhysicsScene.h"
 
 
 Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, float orientation, float mass) : PhysicsObject(shapeID)
@@ -16,8 +17,8 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
-	ApplyForce(gravity * m_mass * timeStep);
 	m_position += m_velocity * timeStep;
+	ApplyForce(gravity * m_mass * timeStep);
 }
 
 void Rigidbody::ApplyForce(glm::vec2 force)
@@ -30,6 +31,17 @@ void Rigidbody::ApplyForceToActor(Rigidbody* actor2, glm::vec2 force)
 	actor2->ApplyForce(force);
 	ApplyForce(-force);
 }
+float PhysicsScene::GetTotalEnergy()
+{
+	float total = 0;
+	for (auto it = m_actors.begin(); it != m_actors.end(); it++)
+	{
+		PhysicsObject* obj = *it;
+		total += obj->GetEnergy();
+	}
+	return total;
+}
+
 
 void Rigidbody::ResolveCollision(Rigidbody* actor2)
 {
@@ -46,17 +58,22 @@ void Rigidbody::ResolveCollision(Rigidbody* actor2)
 
 	float kePre = GetKineticEnergy() + actor2->GetKineticEnergy();
 
-	ApplyForceToActor(actor2, -force);
+	ApplyForceToActor(actor2, force);
 
 	float kePost = GetKineticEnergy() + actor2->GetKineticEnergy();
 
 	float deltaKE = kePost - kePre;
-	if (deltaKE > kePost * 0.1f)
+	if (deltaKE > kePost * 0.01f)
 		std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
 }
 
 float Rigidbody::GetKineticEnergy()
 {
-	return (m_mass * 0.5f) * ((pow(m_velocity.x, 2) * pow(m_velocity.y, 2)));
-	return false;
+	m_kinetic = (m_mass * 0.5f) * ((pow(m_velocity.x, 2) * pow(m_velocity.y, 2)));
+	return m_kinetic; 
+}
+
+float Rigidbody::GetPotentialEnergy()
+{
+	return -GetMass() * glm::dot(PhysicsScene::GetGravity(), GetPosition());
 }

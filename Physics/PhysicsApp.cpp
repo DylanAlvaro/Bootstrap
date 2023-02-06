@@ -42,24 +42,7 @@ bool PhysicsApp::startup()
 	m_physicsScene->SetTimeStep(0.01f);
 	
 	DemoStartUp(1);
-	//activity 1
-	//Circle* ball;
-	//ball = new Circle(glm::vec2(-40, 0), glm::vec2(10, 30), 3.0f, 1, glm::vec4(1, 0, 0, 1));
-	//
-	//m_physicsScene->AddActor(ball);
 	
-	
-	//activity 4
-	//Circle* ball1 = new Circle(glm::vec2(-20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
-	//Circle* ball2 = new Circle(glm::vec2(10, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
-	//
-	//m_physicsScene->AddActor(ball1);
-	//m_physicsScene->AddActor(ball2);
-	//
-	//ball1->ApplyForce(glm::vec2(30, 0));
-	//ball2->ApplyForce(glm::vec2(-15, 0));
-
-
 	return true;
 }
 
@@ -99,7 +82,7 @@ void PhysicsApp::draw()
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
-	static float aspectRatio = 16 / 9;
+	static float aspectRatio = 16.f / 9.f;
 	
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.f, 1.f));
@@ -158,20 +141,40 @@ void PhysicsApp::DemoStartUp(int num)
 	
 	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
 
+	Plane* plane = new Plane(glm::vec2(0, 10), -30);
 	Circle* ball1 = new Circle(glm::vec2(-20, 10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
 	Circle* ball2 = new Circle(glm::vec2(10, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
-	Plane* plane = new Plane(glm::vec2(0, 10), -30);
 
+	m_physicsScene->AddActor(plane);
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
-	m_physicsScene->AddActor(plane);
 #endif 
 
-#ifdef CircleToPlane
+
+#ifdef CollisionResolution
+	
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
+
+	Plane* plane1 = new Plane(glm::vec2(-1, 0), -30);
+	Plane* plane2 = new Plane(glm::vec2(1, 0), -20);
+
+	Circle* ball1 = new Circle(glm::vec2(20, 10), glm::vec2(10, 0), 5.0f, 4, glm::vec4(1, 1, 3, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 2, 0, 1));
+	Circle* ball3 = new Circle(glm::vec2(30, 10), glm::vec2(0), 3.0f, 4, glm::vec4(1, 2, 0, 1));
+	Circle* ball4 = new Circle(glm::vec2(25, 10), glm::vec2(0), 6.0f, 4, glm::vec4(1, 2, 0, 1));
+	
+	
+	m_physicsScene->AddActor(plane1);
+	m_physicsScene->AddActor(plane2);
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+	m_physicsScene->AddActor(ball3);
+	m_physicsScene->AddActor(ball4);
 
 #endif 
 
-#ifdef Circle2Circle
+#ifdef CircleToPlaneCol
 
 #endif 
 

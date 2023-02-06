@@ -5,8 +5,8 @@
 
 Plane::Plane(glm::vec2 normal, float distance) : PhysicsObject(ShapeType::PLANE)
 {
-	m_normal = glm::vec2(0,1);
-	m_distanceToOrigin = 0;
+	m_normal = normal;
+	m_distanceToOrigin = distance;
 }
 
 Plane::~Plane()
@@ -21,9 +21,10 @@ void Plane::Draw(float alpha)
 {
 	float lineSegmentLength = 300;
 	glm::vec2 centerPoint = m_normal * m_distanceToOrigin;
+	// easy to rotate normal through 90 degrees around z
 	glm::vec2 parallel(m_normal.y, -m_normal.x);
 	glm::vec4 colorFade = m_color;
-	colorFade = glm::vec4(1,1,1,1);
+	colorFade = glm::vec4(1, 1, 1, 1);
 	glm::vec2 start = centerPoint + (parallel * lineSegmentLength);
 	glm::vec2 end = centerPoint - (parallel * lineSegmentLength);
 	aie::Gizmos::add2DLine(start, end, colorFade);
@@ -35,26 +36,27 @@ void Plane::ResetPosition()
 {
 }
 
-//void Plane::ResolveCollision(Rigidbody* actor2)
-//{
-//	glm::vec2 normal = glm::normalize(actor2->GetPosition() - m_position);
-//	glm::vec2 relativeVelocity = actor2->GetVelocity() - m_distanceToOrigin;
-//
-//	if (glm::dot(normal, relativeVelocity) >= 0)
-//		return;
-//
-//	float elasticity = 1;
-//	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) / ((1 / GetMass()) + (1 / actor2->GetMass()));
-//
-//	glm::vec2 force = normal * j;
-//
-//	float kePre = GetKineticEnergy() + actor2->GetKineticEnergy();
-//
-//	ApplyForceToActor(actor2, -force);
-//
-//	float kePost = GetKineticEnergy() + actor2->GetKineticEnergy();
-//
-//	float deltaKE = kePost - kePre;
-//	if (deltaKE > kePost * 0.1f)
-//		std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
-//}
+float Plane::GetKineticEnergy()
+{
+	return 0.0f;
+}
+
+void Plane::ResolveCollision(Rigidbody* actor2)
+{
+	glm::vec2 relativeVelocity = actor2->GetVelocity();
+
+	float elasticity = 1;
+	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), m_normal) / (1 / actor2->GetMass());
+
+	glm::vec2 force = GetNormal() * j;
+
+	float kePre = actor2->GetKineticEnergy();
+
+	actor2->ApplyForce(force);
+
+	float kePost = actor2->GetKineticEnergy();
+
+	float deltaKE = kePost - kePre;
+	if (deltaKE > kePost * 0.01f)
+		std::cout << "Kinetic Energy discrepnacy greater than 1% detected!!";
+}

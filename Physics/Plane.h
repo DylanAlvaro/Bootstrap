@@ -16,7 +16,7 @@ public:
 	glm::vec2 GetNormal() { return m_normal; }
 	float GetDistance() { return m_distanceToOrigin; }
 
-	float GetKineticEnergy();
+	virtual float GetKineticEnergy();
 
 	void ResolveCollision(Rigidbody* actor2);
 

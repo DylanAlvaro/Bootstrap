@@ -1,5 +1,5 @@
 #pragma once
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
 #include <vector>
 
 class PhysicsObject;
@@ -17,14 +17,14 @@ public:
 	void DebugScene();
 
 	//Getters
-	glm::vec2 GetGravity() { return m_gravity; }
+	static glm::vec2 GetGravity() { return m_gravity; }
 	float GetTimeStep() { return m_timeStep; }
 
 	//Setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 
-	const int SHAPE_COUNT = 3;
+	virtual float GetTotalEnergy();
 
 	void CheckForCollision();
 
@@ -34,7 +34,7 @@ public:
 	static bool Plane2Circle(PhysicsObject*, PhysicsObject*);
 
 private:
-	glm::vec2 m_gravity;
+	static glm::vec2 m_gravity;
 	float m_timeStep;
 	std::vector<PhysicsObject*> m_actors;
 };

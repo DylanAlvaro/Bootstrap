@@ -1,10 +1,11 @@
 #pragma once
-#include <glm/vec2.hpp>
+#include <glm/glm.hpp>
 
 enum ShapeType {
 	PLANE = 0,
-	CIRCLE, 
-	BOX
+	CIRCLE,
+	//BOX
+	SHAPE_COUNT,
 };
 
 class PhysicsObject {
@@ -16,6 +17,7 @@ public:
 	virtual void Draw(float alpha) = 0;
 	virtual void ResetPosition() {};
 
+	virtual float GetEnergy() { return 0.0f; }
 
 	ShapeType GetShapeID() { return m_shapeID; }
 
