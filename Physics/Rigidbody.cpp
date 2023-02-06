@@ -112,8 +112,10 @@ void Rigidbody::CalculateSmoothedPosition(float alpha)
 
 	float smoothedOrientation = alpha * m_orientation
 		+ (1 - alpha) * m_lastOrientation;
-	float sn = sinf(smoothedOrientation);
+	
 	float cs = cosf(smoothedOrientation);
+	float sn = sinf(smoothedOrientation);
+	
 	m_smoothedLocalX = glm::vec2(cs, sn);
 	m_smoothedLocalY = glm::vec2(-sn, cs);
 }
