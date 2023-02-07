@@ -7,6 +7,9 @@ class Rigidbody : public PhysicsObject
 {
 public:
 
+	const int MIN_LINEAR_THRESHOLD = 0.1f;
+	const int MIN_ANGULAR_THRESHOLD = 0.01f;
+
 	Rigidbody(ShapeType shapeID, glm::vec2 position,
 		glm::vec2 velocity, float orientation, float mass);
 	~Rigidbody();
@@ -19,13 +22,17 @@ public:
 	void CalculateAxes();
 
 	//getters
-	glm::vec2 GetPosition() { return m_position; }
-	float GetOrientation() { return m_orientation; }
-	glm::vec2 GetVelocity() { return m_velocity; }
-	float GetMass() { return m_mass; }
-	float GetMoment() { return m_moment; }
+	glm::vec2 GetPosition() const { return m_position; }
+	float GetOrientation()const { return m_orientation; }
+	glm::vec2 GetVelocity()const { return m_velocity; }
+	float GetMass() const { return m_mass; }
+	float GetMoment() const { return m_moment; }
 	virtual float GetKineticEnergy();
 	float GetPotentialEnergy();
+
+	glm::vec2 GetLocalX() const { return m_localX; }
+	glm::vec2 GetLocalY() const { return m_localY; }
+	float GetAngularVelocity() const  { return m_angularVelocity; }
 
 	void CalculateSmoothedPosition(float alpha);
 
@@ -36,6 +43,9 @@ public:
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	void SetOrientation(float orientation) { m_orientation = orientation; }
 	void SetMass(float mass) { m_mass = mass; }
+
+	float GetLinearDrag() { return m_linearDrag; }
+	float GetAngularDrag() { return m_angularDrag; }
 
 
 
@@ -61,7 +71,10 @@ protected:
 	float m_angularVelocity;
 	float m_moment;
 	float m_lastOrientation;
-	//float m_potentialEnergy;
+	
+
+	float m_linearDrag = 0.3f;
+	float m_angularDrag = 0.3f;
 
 };
 

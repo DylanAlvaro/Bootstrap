@@ -14,6 +14,7 @@
 #include <glm/vec2.hpp>
 
 #include "Rigidbody.h"
+#include "Box.h"
 
 
 PhysicsApp::PhysicsApp() 
@@ -69,6 +70,11 @@ void PhysicsApp::update(float deltaTime)
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
+
+	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
+	{
+		
+	}
 
 }
 
@@ -158,26 +164,109 @@ void PhysicsApp::DemoStartUp(int num)
 	Plane* plane1 = new Plane(glm::vec2(-1, 0), -30);
 	Plane* plane2 = new Plane(glm::vec2(1, 0), -20);
 
-	Circle* ball1 = new Circle(glm::vec2(20, 10), glm::vec2(10, 0), 5.0f, 4, glm::vec4(1, 1, 3, 1));
+	Circle* ball1 = new Circle(glm::vec2(20, 10), glm::vec2(10, 0), 5.0f, 4, glm::vec4(1, 0, 0, 1));
 	Circle* ball2 = new Circle(glm::vec2(10, 10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 2, 0, 1));
 	Circle* ball3 = new Circle(glm::vec2(30, 10), glm::vec2(0), 3.0f, 4, glm::vec4(1, 2, 0, 1));
 	Circle* ball4 = new Circle(glm::vec2(25, 10), glm::vec2(0), 6.0f, 4, glm::vec4(1, 2, 0, 1));
 	
+	Box* box1 = new Box(glm::vec2(10, 10), glm::vec2(0, 0), 0, glm::vec2(5), glm::vec4(1, 1, 1, 1));
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
 	
 	m_physicsScene->AddActor(plane1);
 	m_physicsScene->AddActor(plane2);
+	m_physicsScene->AddActor(ball3);
+	m_physicsScene->AddActor(ball4);
+
+	m_physicsScene->AddActor(box1);
+
+#endif 
+
+#ifdef RotationalForce2
 	
+	m_physicsScene->SetGravity(glm::vec2(0, -32.f));
+
+	Plane* plane1 = new Plane(glm::vec2(0, 1), -30);
+
+	Circle* ball1 = new Circle(glm::vec2(-20, 10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+
+	Box* box1 = new Box(glm::vec2(-20, 30), glm::vec2(0), 5.0f, glm::vec2(1, 5), glm::vec4(0, 1, 1, 1));
+	Box* box2 = new Box(glm::vec2(-25, 10), glm::vec2(0), 4.0f, glm::vec2(2,5), glm::vec4(0, 1, 1, 1));
+
+	m_physicsScene->AddActor(plane1);
+
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+
+	m_physicsScene->AddActor(box1);
+	m_physicsScene->AddActor(box2);
+	
+#endif 
+
+#ifdef PoolTable
+
+
+
+	m_physicsScene->SetGravity(glm::vec2(0, 0));
+	Plane* plane4 = new Plane(glm::vec2(0, -1), -50); // top
+	Plane* plane1 = new Plane(glm::vec2(0, 1), -50); // bottom
+	Plane* plane2 = new Plane(glm::vec2(-1, 0), -90); // right
+	Plane* plane3 = new Plane(glm::vec2(-1, 0), 100); // left
+
+	// cue ball
+	Circle* cueBall = new Circle(glm::vec2(-30, 10), glm::vec2(0), 2.0f, 3, glm::vec4(1, 0, 0, 1));
+	m_CueBall = cueBall;
+
+	Circle* ball1 = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(30, 5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball3 = new Circle(glm::vec2(30, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball4 = new Circle(glm::vec2(40, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	Circle* ball5 = new Circle(glm::vec2(40, -10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball6 = new Circle(glm::vec2(40, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball7 = new Circle(glm::vec2(50, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball8 = new Circle(glm::vec2(50, 5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	Circle* ball9 = new Circle(glm::vec2(50, -15), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball10 = new Circle(glm::vec2(50, 15), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	Circle* ball11 = new Circle(glm::vec2(60, 20), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball12 = new Circle(glm::vec2(60, -10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+	Circle* ball13 = new Circle(glm::vec2(60, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball14 = new Circle(glm::vec2(60, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	Circle* ball15 = new Circle(glm::vec2(60, -20), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+	
+
+
+
+	m_physicsScene->AddActor(plane1);
+	m_physicsScene->AddActor(plane2);
+	m_physicsScene->AddActor(plane3);
+	m_physicsScene->AddActor(plane4);
+
+	m_physicsScene->AddActor(cueBall);
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
 	m_physicsScene->AddActor(ball3);
 	m_physicsScene->AddActor(ball4);
+	m_physicsScene->AddActor(ball5);
+	m_physicsScene->AddActor(ball6);
+	m_physicsScene->AddActor(ball7);
+	m_physicsScene->AddActor(ball8);
+	m_physicsScene->AddActor(ball9);
+	m_physicsScene->AddActor(ball10);
+	m_physicsScene->AddActor(ball11);
+	m_physicsScene->AddActor(ball12);
+	m_physicsScene->AddActor(ball13);
+	m_physicsScene->AddActor(ball14);
+	m_physicsScene->AddActor(ball15);
+	
 
-#endif 
-
-#ifdef CircleToPlaneCol
-
-#endif 
-
+	
+#endif // PoolTable
 
 }
 

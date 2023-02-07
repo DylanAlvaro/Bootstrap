@@ -29,6 +29,8 @@ protected:
 	
 	std::vector<PhysicsObject*> m_objects;
 
+	Circle* m_CueBall;
+
 public:
 	void DemoStartUp(int num);
 	void DemoUpdates(aie::Input* input, float dt);
