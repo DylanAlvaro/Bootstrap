@@ -3,7 +3,7 @@
 class Box : public Rigidbody
 {
 public:
-	Box(glm::vec2 position, glm::vec2 velocity,
+	Box(glm::vec2 position, glm::vec2 velocity,glm::vec2 orientation,
 		float mass, glm::vec2 extends, glm::vec4 color);
 	~Box();
 

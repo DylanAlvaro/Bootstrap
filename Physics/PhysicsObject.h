@@ -2,9 +2,10 @@
 #include <glm/glm.hpp>
 
 enum ShapeType {
+	JOINT = -1,
 	PLANE = 0,
 	CIRCLE,
-	BOX
+	BOX,
 };
 const int SHAPE_COUNT = 3;
 class PhysicsObject {
@@ -19,7 +20,7 @@ public:
 	virtual float GetEnergy() { return 0.0f; }
 	float GetElasticity() { return m_elasticity; }
 
-	float SetElasticity(const float elasticity) { m_elasticity = elasticity; }
+	void SetElasticity(const float elasticity) { m_elasticity = elasticity; }
 
 	ShapeType GetShapeID() { return m_shapeID; }
 

@@ -2,12 +2,13 @@
 #include "Gizmos.h"
 #include "Rigidbody.h"
 
-Box::Box(glm::vec2 position, glm::vec2 velocity, float mass, glm::vec2 extends, glm::vec4 color) : Rigidbody(BOX, position, velocity, 0, mass)
+Box::Box(glm::vec2 position, glm::vec2 velocity, glm::vec2 orientation, float mass, glm::vec2 extends, glm::vec4 color) : Rigidbody(BOX, position, velocity, 0, mass)
 {
 	m_position = position;
 	m_color = color;
 	m_extents = extends;
 	m_moment = 1.0f / 12.0f * mass * extends.x * extends.y;
+	m_isKinematic = true;
 }
 
 Box::~Box()
@@ -92,7 +93,6 @@ bool Box::CheckBoxCorners(const Box& box, glm::vec2& contact, int& numContacts, 
 	}
 	return res;
 }
-
 
 void Box::Draw(float alpha)
 {

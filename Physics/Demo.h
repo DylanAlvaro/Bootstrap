@@ -11,8 +11,9 @@
 //#define CollisionDetection
 //#define CollisionResolution
 //#define RotationalForce2
-#define PoolTable
-
+//#define PoolTable
+//#define ContactForces
+#define Beads
 
 
 

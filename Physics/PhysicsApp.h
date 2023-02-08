@@ -4,6 +4,8 @@
 #include "Renderer2D.h"
 #include "Input.h"
 #include <vector>
+#include "Circle.h"
+#include "Box.h"
 
 class PhysicsScene;
 class PhysicsObject;
@@ -29,7 +31,9 @@ protected:
 	
 	std::vector<PhysicsObject*> m_objects;
 
-	Circle* m_CueBall;
+	Circle* cueBall;
+	Box* staticBox;
+
 
 public:
 	void DemoStartUp(int num);

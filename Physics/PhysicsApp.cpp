@@ -15,6 +15,7 @@
 
 #include "Rigidbody.h"
 #include "Box.h"
+#include "Spring.h"
 
 
 PhysicsApp::PhysicsApp() 
@@ -73,7 +74,7 @@ void PhysicsApp::update(float deltaTime)
 
 	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
 	{
-		
+		cueBall->ApplyForce(glm::vec2(500, 0), cueBall->GetPosition());
 	}
 
 }
@@ -216,8 +217,8 @@ void PhysicsApp::DemoStartUp(int num)
 	Plane* plane3 = new Plane(glm::vec2(-1, 0), 100); // left
 
 	// cue ball
-	Circle* cueBall = new Circle(glm::vec2(-30, 10), glm::vec2(0), 2.0f, 3, glm::vec4(1, 0, 0, 1));
-	m_CueBall = cueBall;
+	Circle* cue = new Circle(glm::vec2(-20, 0), glm::vec2(0), 2.0f, 3, glm::vec4(1, 0, 0, 1));
+	cueBall = cue;
 
 	Circle* ball1 = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
 	Circle* ball2 = new Circle(glm::vec2(30, 5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
@@ -247,7 +248,7 @@ void PhysicsApp::DemoStartUp(int num)
 	m_physicsScene->AddActor(plane3);
 	m_physicsScene->AddActor(plane4);
 
-	m_physicsScene->AddActor(cueBall);
+	m_physicsScene->AddActor(cue);
 	m_physicsScene->AddActor(ball1);
 	m_physicsScene->AddActor(ball2);
 	m_physicsScene->AddActor(ball3);
@@ -267,6 +268,45 @@ void PhysicsApp::DemoStartUp(int num)
 
 	
 #endif // PoolTable
+#ifdef ContactForces
+	m_physicsScene->SetGravity(glm::vec2(0, -32.f));
+	
+
+	Box* box1 = new Box(glm::vec2(0, -30), glm::vec2(0), 5.0f, glm::vec2(50, 10), glm::vec4(0, 1, 1, 1));
+
+	Circle* ball1 = new Circle(glm::vec2(-20, 10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1));
+	Circle* ball2 = new Circle(glm::vec2(10, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1));
+
+	m_physicsScene->AddActor(box1);
+	
+	m_physicsScene->AddActor(ball1);
+	m_physicsScene->AddActor(ball2);
+
+
+#endif // ContactForces
+
+#ifdef Beads
+	m_physicsScene->SetGravity(glm::vec2(0, -9.82f));
+
+	Circle* prev = nullptr;
+	for (int i = 0; i < num; i++)
+	{
+		// spawn a circle to the right and below the previous one, so that the whole rope acts under gravity and swings
+		Circle* circle = new Circle(glm::vec2(i * 3, 30 - i * 5), glm::vec2(0), 10, 2, glm::vec4(1, 0, 0, 1));
+		if (i == 0)
+			circle->SetKinematic(true);
+		m_physicsScene->AddActor(circle);
+		if (prev)
+			m_physicsScene->AddActor(new Spring(circle, prev, 500, 10, 7));
+		prev = circle;
+	}
+
+	// add a kinematic box at an angle for the rope to drape over
+	Box* box = new Box(glm::vec2(0, -20), glm::vec2(0), 0.3f, 20, 8, 2, glm::vec4(0, 0, 1, 1));
+	
+	box->SetKinematic(true);
+	m_physicsScene->AddActor(box);
+#endif // Beads
 
 }
 

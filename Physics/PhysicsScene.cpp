@@ -36,6 +36,24 @@ void PhysicsScene::RemoveActor(PhysicsObject* actor)
 
 void PhysicsScene::CheckForCollision()
 {
+	int actorCount = m_actors.size();
+
+	//need to check for collisions against all objects except this one.
+	for (int outer = 0; outer < actorCount - 1; outer++)
+	{
+		for (int inner = outer + 1; inner < actorCount; inner++)
+		{
+			PhysicsObject* object1 = m_actors[outer];
+			PhysicsObject* object2 = m_actors[inner];
+			int shapeId1 = object1->GetShapeID();
+			int shapeId2 = object2->GetShapeID();
+
+			// this check will ensure we don't include any joints 
+			// in the collision checks
+			if (shapeId1 < 0 || shapeId2 < 0)
+				continue;
+		}
+	}
 }
 
 bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
@@ -46,10 +64,11 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 	if (circle1 != nullptr && circle2 != nullptr) 
 	{
 		float dist = distance(circle1->GetPosition(), circle2->GetPosition());
-		if (dist < circle1->GetRadius() + circle2->GetRadius()) 
+		float penetration = circle1->GetRadius() + circle2->GetRadius() - dist;
+		if (penetration > 0) 
 		{
-			circle1->ResolveCollision(circle2, 0.5f * (circle1->GetPosition() + circle2->GetPosition()));
-			//circle2->ResolveCollision(circle1, 0.5f * (circle2->GetPosition() + circle1->GetPosition()));
+			circle1->ResolveCollision(circle2, (circle1->GetPosition() + circle2->GetPosition()) * 0.5f, nullptr, penetration);
+			//circle1->ResolveCollision(circle2, 0.5f * (circle1->GetPosition() + circle2->GetPosition()));
 			return true;
 		}
 	}
@@ -162,11 +181,13 @@ bool PhysicsScene::Box2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 		// and convert back into world coordinates
 		glm::vec2 closestPointOnBoxWorld = box->GetPosition() + closestPointOnBoxBox.x * box->GetLocalX() + closestPointOnBoxBox.y * box->GetLocalY();
 		glm::vec2 circleToBox = circle->GetPosition() - closestPointOnBoxWorld;
-		if (glm::length(circleToBox) < circle->GetRadius())
+		float penetration = circle->GetRadius() - glm::length(circleToBox);
+		
+		if (penetration > 0)
 		{
 			glm::vec2 direction = glm::normalize(circleToBox);
 			glm::vec2 contact = closestPointOnBoxWorld;
-			box->ResolveCollision(circle, contact, &direction);
+			box->ResolveCollision(circle, contact, &direction, penetration);
 		}
 	}
 
@@ -203,14 +224,12 @@ bool PhysicsScene::Box2Box(PhysicsObject* obj1, PhysicsObject* obj2) {
 		}
 		if (pen > 0) 
 		{
-			box1->ResolveCollision(box2, contact / float(numContacts), &norm);
+			box1->ResolveCollision(box2, contact / float(numContacts), &norm, pen);
 		}
 		return true;
 	}
 	return false;
 }
-
-
 
 void PhysicsScene::Update(float dt)
 {
@@ -269,5 +288,16 @@ void PhysicsScene::Draw()
 		pActor->Draw(1);
 	}
 	
+}
+
+void PhysicsScene::ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::vec2 norm, float pen)
+{
+	float body2Mass = body2 ? body2->GetMass() : INT_MAX;
+
+	float body1Factor = body2Mass / (body1->GetMass() + body2Mass);
+
+	body1->SetPosition(body1->GetPosition() - body1Factor * norm * pen);
+	if (body2)
+		body2->SetPosition(body2->GetPosition() + (1 - body1Factor) * norm * pen);
 }
 

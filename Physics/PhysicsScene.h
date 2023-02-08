@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include <vector>
+#include "Rigidbody.h"
 
 class PhysicsObject;
 
@@ -16,14 +17,17 @@ public:
 	void Draw();
 	void DebugScene();
 
+	static void ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::vec2 norm, float pen);
 
 	//Getters
 	static glm::vec2 GetGravity() { return m_gravity; }
 	float GetTimeStep() { return m_timeStep; }
+	glm::vec2 GetPosition() const { return m_position; }
 
 	//Setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
+
 
 	virtual float GetTotalEnergy();
 
@@ -45,5 +49,7 @@ private:
 	std::vector<PhysicsObject*> m_actors;
 
 	glm::vec2 m_extents;
+
+	glm::vec2 m_position;
 };
 

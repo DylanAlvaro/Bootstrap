@@ -18,31 +18,39 @@ public:
 	
 	void ApplyForce(glm::vec2 force, glm::vec2 pos);
 	void ApplyForceToActor(Rigidbody* actor2, glm::vec2 force);
-	void ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2* collisionNormal=nullptr);
+	void ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2* collisionNormal = nullptr, float pen = 0);
 	void CalculateAxes();
 
 	//getters
 	glm::vec2 GetPosition() const { return m_position; }
-	float GetOrientation()const { return m_orientation; }
-	glm::vec2 GetVelocity()const { return m_velocity; }
-	float GetMass() const { return m_mass; }
-	float GetMoment() const { return m_moment; }
+	float GetOrientation()  { return m_orientation; }
+	glm::vec2 GetVelocity() { return m_velocity; }
+	float GetMass()  { return m_isKinematic ? INT_MAX : m_mass; }
+	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
 	virtual float GetKineticEnergy();
 	float GetPotentialEnergy();
 
 	glm::vec2 GetLocalX() const { return m_localX; }
 	glm::vec2 GetLocalY() const { return m_localY; }
-	float GetAngularVelocity() const  { return m_angularVelocity; }
+	float GetAngularVelocity() { return m_angularVelocity; }
 
 	void CalculateSmoothedPosition(float alpha);
 
 	virtual float GetEnergy();
+
+	glm::vec2 ToWorld(glm::vec2 contact);
+	glm::vec2 ToWorldSmoothed(glm::vec2 localPos);
+
+
 
 	//setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetVelocity(glm::vec2 velocity) { m_velocity = velocity; }
 	void SetOrientation(float orientation) { m_orientation = orientation; }
 	void SetMass(float mass) { m_mass = mass; }
+	void SetPosition(const glm::vec2 position) { m_position = position; }
+	void SetKinematic(bool state) { m_isKinematic = state; }
+	bool IsKinematic() { return m_isKinematic; }
 
 	float GetLinearDrag() { return m_linearDrag; }
 	float GetAngularDrag() { return m_angularDrag; }
@@ -75,6 +83,8 @@ protected:
 
 	float m_linearDrag = 0.3f;
 	float m_angularDrag = 0.3f;
+
+	bool m_isKinematic;
 
 };
 
