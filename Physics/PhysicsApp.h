@@ -22,6 +22,10 @@ public:
 	virtual void update(float deltaTime);
 	virtual void draw();
 
+	glm::vec2 ScreenToWorld(glm::vec2 screenPos);
+
+	int m_playersTurn;
+
 protected:
 
 	aie::Renderer2D*	m_2dRenderer;
@@ -33,6 +37,10 @@ protected:
 
 	Circle* cueBall;
 	Box* staticBox;
+
+	glm::vec2 m_position;
+	glm::vec2 m_localX;
+	glm::vec2 m_localY;
 
 
 public:

@@ -15,7 +15,7 @@ public:
 
 	virtual void Draw(float alpha);
 
-	virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
+virtual void FixedUpdate(glm::vec2 gravity, float timeStep);
 
 	glm::vec2 GetContact1() { return m_contact1; }
 	glm::vec2 GetContact2() { return m_contact2; }

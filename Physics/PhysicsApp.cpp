@@ -72,11 +72,25 @@ void PhysicsApp::update(float deltaTime)
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
 
-	if (input->isKeyDown(aie::INPUT_KEY_SPACE))
+	if (input->isMouseButtonDown(0) && cueBall->GetVelocity() == glm::vec2(0))
 	{
-		cueBall->ApplyForce(glm::vec2(500, 0), cueBall->GetPosition());
+		glm::vec2 mousePos = glm::vec2(input->getMouseX(), input->getMouseY());
+		glm::vec2 whitePos = cueBall->GetPosition();
+		glm::vec2 mouseToWhite = glm::normalize(whitePos - ScreenToWorld(mousePos));
+
+		aie::Gizmos::add2DLine(whitePos, whitePos - ScreenToWorld(mousePos), glm::vec4(1, 1, 1, 1));
 	}
 
+	if (input->wasMouseButtonReleased(0) && cueBall->GetVelocity() == glm::vec2(0))
+	{
+		glm::vec2 mousePos = glm::vec2(input->getMouseX(), input->getMouseY());
+		glm::vec2 whitePos = cueBall->GetPosition();
+		glm::vec2 mouseToWhite = glm::normalize(whitePos - ScreenToWorld(mousePos));
+
+		cueBall->ApplyForce(mouseToWhite * glm::vec2(800, 800), glm::vec2(0));
+
+		m_playersTurn == 1 ? m_playersTurn = 2 : m_playersTurn = 1;
+	}
 }
 
 void PhysicsApp::draw() 
@@ -99,6 +113,11 @@ void PhysicsApp::draw()
 
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+glm::vec2 PhysicsApp::ScreenToWorld(glm::vec2 screenPos)
+{
+	return m_position + m_localX + m_localY;
 }
 
 void PhysicsApp::DemoStartUp(int num)
@@ -306,6 +325,8 @@ void PhysicsApp::DemoStartUp(int num)
 	
 	box->SetKinematic(true);
 	m_physicsScene->AddActor(box);
+
+
 #endif // Beads
 
 }
