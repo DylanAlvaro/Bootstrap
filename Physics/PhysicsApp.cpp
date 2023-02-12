@@ -18,6 +18,7 @@
 #include "Spring.h"
 
 
+
 PhysicsApp::PhysicsApp() 
 {
 	
@@ -87,10 +88,12 @@ void PhysicsApp::update(float deltaTime)
 		glm::vec2 whitePos = cueBall->GetPosition();
 		glm::vec2 mouseToWhite = glm::normalize(whitePos - ScreenToWorld(mousePos));
 
-		cueBall->ApplyForce(mouseToWhite * glm::vec2(800, 800), glm::vec2(0));
+		cueBall->ApplyForce(mouseToWhite * glm::vec2(800), glm::vec2(0));
 
 		m_playersTurn == 1 ? m_playersTurn = 2 : m_playersTurn = 1;
 	}
+
+	
 }
 
 void PhysicsApp::draw() 
@@ -102,11 +105,15 @@ void PhysicsApp::draw()
 	// begin drawing sprites
 	m_2dRenderer->begin();
 
+	
+
 	// draw your stuff here!
 	static float aspectRatio = 16.f / 9.f;
 	
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.f, 1.f));
+
+	aie::Gizmos::draw2D(glm::ortho<float>(-m_extents, m_extents, -m_extents / m_aspectRatio, m_extents / m_aspectRatio, -1.0f, 1.0f));
 	
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
@@ -117,7 +124,17 @@ void PhysicsApp::draw()
 
 glm::vec2 PhysicsApp::ScreenToWorld(glm::vec2 screenPos)
 {
-	return m_position + m_localX + m_localY;
+	glm::vec2 worldPos = screenPos;
+
+	// move the centre of the screen to (0,0)
+	worldPos.x -= getWindowWidth() / 2;
+	worldPos.y -= getWindowHeight() / 2;
+
+	// scale according to our extents
+	worldPos.x *= 2.0f * m_extents / getWindowWidth();
+	worldPos.y *= 2.0f * m_extents / (m_aspectRatio * getWindowHeight());
+
+	return worldPos;
 }
 
 void PhysicsApp::DemoStartUp(int num)

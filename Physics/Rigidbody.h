@@ -24,15 +24,17 @@ public:
 	//getters
 	glm::vec2 GetPosition() const { return m_position; }
 	float GetOrientation()  { return m_orientation; }
+	float GetAngularVelocity() { return m_angularVelocity; }
 	glm::vec2 GetVelocity() { return m_velocity; }
 	float GetMass()  { return m_isKinematic ? INT_MAX : m_mass; }
 	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
 	virtual float GetKineticEnergy();
 	float GetPotentialEnergy();
 
+	float GetElasticity() { return m_elasticity; }
+
 	glm::vec2 GetLocalX() const { return m_localX; }
 	glm::vec2 GetLocalY() const { return m_localY; }
-	float GetAngularVelocity() { return m_angularVelocity; }
 
 	void CalculateSmoothedPosition(float alpha);
 
@@ -51,11 +53,12 @@ public:
 	void SetPosition(const glm::vec2 position) { m_position = position; }
 	void SetKinematic(bool state) { m_isKinematic = state; }
 	bool IsKinematic() { return m_isKinematic; }
+	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
 
 	float GetLinearDrag() { return m_linearDrag; }
 	float GetAngularDrag() { return m_angularDrag; }
 
-
+	std::function<void(PhysicsObject*)> collisionCallback;
 
 protected:
 	glm::vec2 m_position;

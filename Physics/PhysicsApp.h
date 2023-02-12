@@ -41,6 +41,10 @@ protected:
 	glm::vec2 m_position;
 	glm::vec2 m_localX;
 	glm::vec2 m_localY;
+	
+	const float m_extents = 100;
+	const float m_aspectRatio = 16.0f / 9.0f;
+
 
 
 public:

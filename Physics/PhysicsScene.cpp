@@ -68,7 +68,6 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 		if (penetration > 0) 
 		{
 			circle1->ResolveCollision(circle2, (circle1->GetPosition() + circle2->GetPosition()) * 0.5f, nullptr, penetration);
-			//circle1->ResolveCollision(circle2, 0.5f * (circle1->GetPosition() + circle2->GetPosition()));
 			return true;
 		}
 	}
@@ -180,6 +179,7 @@ bool PhysicsScene::Box2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 		if (closestPointOnBoxBox.y > extents.y) closestPointOnBoxBox.y = extents.y;
 		// and convert back into world coordinates
 		glm::vec2 closestPointOnBoxWorld = box->GetPosition() + closestPointOnBoxBox.x * box->GetLocalX() + closestPointOnBoxBox.y * box->GetLocalY();
+		
 		glm::vec2 circleToBox = circle->GetPosition() - closestPointOnBoxWorld;
 		float penetration = circle->GetRadius() - glm::length(circleToBox);
 		
