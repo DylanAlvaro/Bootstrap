@@ -14,6 +14,7 @@
 #define PoolTable
 //#define ContactForces
 //#define Beads
+//#define TriggerTest
 
 
 

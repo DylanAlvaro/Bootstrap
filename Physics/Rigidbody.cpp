@@ -14,9 +14,8 @@ Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_velocity = velocity;
 	m_mass = mass;
 	m_angularVelocity = 0;
-	m_elasticity = .3f;
-	m_isKinematic = false;
-
+	m_elasticity = 0.3f;
+	m_isTrigger = false;
 }
 
 Rigidbody::~Rigidbody()
@@ -25,6 +24,25 @@ Rigidbody::~Rigidbody()
 
 void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
+	CalculateAxes();
+
+	if (m_isTrigger)
+	{
+		for (auto it = m_objectsInside.begin(); it != m_objectsInside.end(); it++)
+		{
+			if (std::find(m_objectsInsideThisFrame.begin(), m_objectsInsideThisFrame.end(), *it) == m_objectsInsideThisFrame.end())
+			{
+				if (triggerExit)
+					triggerExit(*it);
+
+				it = m_objectsInside.erase(it);
+				if (it == m_objectsInside.end())
+					break;
+			}
+		}
+	}
+	m_objectsInsideThisFrame.clear();
+
 	if (m_isKinematic)
 	{
 		m_velocity = glm::vec2(0);
@@ -35,7 +53,6 @@ void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 	m_lastPosition = m_position;
 	m_lastOrientation = m_orientation;
 
-	CalculateAxes();
 
 	m_velocity -= m_velocity * m_linearDrag * timeStep;
 	m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
@@ -124,20 +141,15 @@ glm::vec2 Rigidbody::ToWorldSmoothed(glm::vec2 localPos)
 {
 	return m_smoothedPosition + m_smoothedLocalX * localPos.x + m_smoothedLocalY * localPos.y;
 }
-
 void Rigidbody::ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2* collisionNormal, float pen)
 {
+	m_objectsInsideThisFrame.push_back(actor2);
+	actor2->m_objectsInsideThisFrame.push_back(this);
+
 	// find the vector between their centres, or use the provided direction
 	// of force, and make sure it's normalised
 	glm::vec2 normal = glm::normalize(collisionNormal ? *collisionNormal : actor2->m_position - m_position);
 	glm::vec2 relativeVelocity = actor2->GetVelocity() - m_velocity;
-
-	float elasticity = (GetElasticity() + actor2->GetElasticity()) / 2.0f;
-
-	float j = glm::dot(-(1 + elasticity) * (relativeVelocity), normal) /
-		glm::dot(normal, normal * ((1 / GetMass()) + (1 / actor2->GetMass())));
-
-	glm::vec2 force = normal * j;
 
 	// get the vector perpendicular to the collision normal
 	glm::vec2 perp(normal.y, -normal.x);
@@ -152,7 +164,7 @@ void Rigidbody::ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2
 	float v1 = glm::dot(m_velocity, normal) - r1 * m_angularVelocity;
 	// velocity of contact point on actor2
 	float v2 = glm::dot(actor2->m_velocity, normal) + r2 * actor2->m_angularVelocity;
-	
+
 	if (v1 > v2) // they're moving closer
 	{
 		// calculate the effective mass at contact point for each object
@@ -162,18 +174,52 @@ void Rigidbody::ResolveCollision(Rigidbody* actor2, glm::vec2 contact, glm::vec2
 
 		float elasticity = (GetElasticity() + actor2->GetElasticity()) / 2.0f;
 
-		glm::vec2 force = (1.0f + elasticity) * mass1 * mass2 / (mass1 + mass2) * (v1 - v2) * normal;
+		glm::vec2 force = (1.0f + elasticity) * mass1 * mass2 /
+			(mass1 + mass2) * (v1 - v2) * normal;
 
-		if (pen > 0)
+		float kePre = GetKineticEnergy() + actor2->GetKineticEnergy();
+
+		//Apply equal and opposite forces
+		
+		if (!m_isTrigger && !actor2->m_isTrigger)
 		{
-			PhysicsScene::ApplyContactForces(this, actor2, normal, pen);
+			ApplyForce(-force, contact - m_position);
+			actor2->ApplyForce(force, contact - actor2->m_position);
+
+			if (collisionCallback != nullptr)
+				collisionCallback(actor2);
+			if (actor2->collisionCallback)
+				actor2->collisionCallback(this);
+		}
+		else
+		{
+			TriggerEnter(actor2);
+			actor2->TriggerEnter(this);
 		}
 
+		float kePost = GetKineticEnergy() + actor2->GetKineticEnergy();
+
+		float deltaKE = kePost - kePre;
+		if (deltaKE > kePost * 0.01f)
+			std::cout << "Kinetic Energy discrepancy greater than 1% detected!!";
+
+		if (pen > 0)
+			PhysicsScene::ApplyContactForces(this, actor2, normal, pen);
+	}
+
 		//apply equal and opposite forces
-		ApplyForce(-force, contact - m_position);
-		actor2->ApplyForce(force, contact - actor2->m_position);
+}
+
+void Rigidbody::TriggerEnter(PhysicsObject* actor2)
+{
+	if (m_isTrigger && std::find(m_objectsInside.begin(), m_objectsInside.end(), actor2) == m_objectsInside.end())
+	{
+		m_objectsInside.push_back(actor2);
+		if (triggerEnter != nullptr)
+			triggerEnter(actor2);
 	}
 }
+
 
 
 

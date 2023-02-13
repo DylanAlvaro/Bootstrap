@@ -4,7 +4,7 @@
 int main() {
 	
 	// allocation
-	auto app = new GameScene();
+	auto app = new PhysicsApp();
 
 	// initialise and loop
 	app->run("AIE", 1280, 720, false);

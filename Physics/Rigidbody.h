@@ -1,6 +1,8 @@
 #pragma once
 #include "PhysicsObject.h"
 #include <glm/glm.hpp>
+#include <list>
+#include <functional>
 
 
 class Rigidbody : public PhysicsObject
@@ -43,7 +45,7 @@ public:
 	glm::vec2 ToWorld(glm::vec2 contact);
 	glm::vec2 ToWorldSmoothed(glm::vec2 localPos);
 
-
+	std::function<void(PhysicsObject*)> collisionCallback;
 
 	//setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
@@ -54,11 +56,15 @@ public:
 	void SetKinematic(bool state) { m_isKinematic = state; }
 	bool IsKinematic() { return m_isKinematic; }
 	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
-
+	void SetTrigger(bool state) { m_isTrigger = state; }
 	float GetLinearDrag() { return m_linearDrag; }
 	float GetAngularDrag() { return m_angularDrag; }
 
-	std::function<void(PhysicsObject*)> collisionCallback;
+	bool IsTrigger() { return m_isTrigger; }
+	void TriggerEnter(PhysicsObject* actor2);
+
+	std::function<void(PhysicsObject*)> triggerEnter;
+	std::function<void(PhysicsObject*)> triggerExit;
 
 protected:
 	glm::vec2 m_position;
@@ -82,12 +88,16 @@ protected:
 	float m_angularVelocity;
 	float m_moment;
 	float m_lastOrientation;
+
+
 	
 
 	float m_linearDrag = 0.3f;
 	float m_angularDrag = 0.3f;
 
 	bool m_isKinematic;
-
+	bool m_isTrigger;
+	std::list<PhysicsObject*> m_objectsInside;
+	std::list<PhysicsObject*> m_objectsInsideThisFrame;
 };
 

@@ -65,7 +65,7 @@ bool PhysicsScene::Circle2Circle(PhysicsObject* obj1, PhysicsObject* obj2)
 	{
 		float dist = distance(circle1->GetPosition(), circle2->GetPosition());
 		float penetration = circle1->GetRadius() + circle2->GetRadius() - dist;
-		if (penetration > 0) 
+		if (penetration > 0)
 		{
 			circle1->ResolveCollision(circle2, (circle1->GetPosition() + circle2->GetPosition()) * 0.5f, nullptr, penetration);
 			return true;
@@ -299,5 +299,7 @@ void PhysicsScene::ApplyContactForces(Rigidbody* body1, Rigidbody* body2, glm::v
 	body1->SetPosition(body1->GetPosition() - body1Factor * norm * pen);
 	if (body2)
 		body2->SetPosition(body2->GetPosition() + (1 - body1Factor) * norm * pen);
-}
 
+	if ((body1 && body1->IsTrigger()) || (body2 && body2->IsTrigger()))
+		return;
+}

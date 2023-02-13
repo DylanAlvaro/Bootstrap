@@ -20,6 +20,8 @@ public:
 	virtual float GetEnergy() { return 0.0f; }
 	float GetElasticity() { return m_elasticity; }
 
+	//virtual bool IsInside(glm::vec2 point) { return false; };
+
 	void SetElasticity(const float elasticity) { m_elasticity = elasticity; }
 
 	ShapeType GetShapeID() { return m_shapeID; }
