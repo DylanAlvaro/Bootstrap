@@ -14,8 +14,9 @@ Rigidbody::Rigidbody(ShapeType shapeID, glm::vec2 position, glm::vec2 velocity, 
 	m_velocity = velocity;
 	m_mass = mass;
 	m_angularVelocity = 0;
-	m_elasticity = 0.3f;
+	m_elasticity = 1.f;
 	m_isTrigger = false;
+	m_isAsleep = false;
 }
 
 Rigidbody::~Rigidbody()
@@ -65,6 +66,12 @@ void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 	{
 		m_angularVelocity = 0;
 	}
+
+	if (m_angularVelocity == 0 && m_velocity == glm::vec2(0, 0))
+	{
+		m_isAsleep = true;
+	}
+	
 
 	m_position += m_velocity * timeStep;
 	ApplyForce(gravity * GetMass() * timeStep, glm::vec2(0));

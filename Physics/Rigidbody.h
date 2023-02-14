@@ -32,6 +32,7 @@ public:
 	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
 	virtual float GetKineticEnergy();
 	float GetPotentialEnergy();
+	bool GetTrigger() { return m_isTrigger; }
 
 	float GetElasticity() { return m_elasticity; }
 
@@ -60,7 +61,10 @@ public:
 	float GetLinearDrag() { return m_linearDrag; }
 	float GetAngularDrag() { return m_angularDrag; }
 
+
 	bool IsTrigger() { return m_isTrigger; }
+	
+	
 	void TriggerEnter(PhysicsObject* actor2);
 
 	std::function<void(PhysicsObject*)> triggerEnter;
@@ -81,6 +85,8 @@ protected:
 	glm::vec2 m_localX;
 	glm::vec2 m_localY;
 
+
+
 	
 	float m_mass;
 	float m_kinetic;
@@ -92,11 +98,14 @@ protected:
 
 	
 
-	float m_linearDrag = 0.3f;
-	float m_angularDrag = 0.3f;
+	float m_linearDrag = 0.6f;
+	float m_angularDrag = 0.6f;
 
 	bool m_isKinematic;
 	bool m_isTrigger;
+
+	bool m_isAsleep;
+
 	std::list<PhysicsObject*> m_objectsInside;
 	std::list<PhysicsObject*> m_objectsInsideThisFrame;
 };

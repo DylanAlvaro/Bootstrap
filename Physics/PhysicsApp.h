@@ -23,6 +23,7 @@ public:
 	virtual void draw();
 
 	glm::vec2 ScreenToWorld(glm::vec2 screenPos);
+	void PlayerTurns();
 
 
 protected:
@@ -33,8 +34,11 @@ protected:
 	PhysicsScene* m_physicsScene;
 	
 	std::vector<PhysicsObject*> m_objects;
+	std::vector<Circle*> m_balls;
+	std::vector<Circle*> m_inHole;
 
 	Circle* cueBall;
+	Circle* blackBall;
 	Box* staticBox;
 
 	glm::vec2 m_position;
@@ -48,7 +52,15 @@ protected:
 	float m_cameraX;
 	float m_cameraY;
 
+	bool hasBeenHit = false;
+	bool m_isAsleep = false;
+
+	//glm::vec2 hitpos;
+
+	int m_playersTurn;
+
 	void OnBall2Check(PhysicsObject* other);
+	void SpawnBalls();
 
 
 
