@@ -53,6 +53,8 @@ protected:
 	float m_cameraY;
 
 	bool hasBeenHit = false;
+
+	bool hasBeenSunk;
 	bool m_isAsleep = false;
 
 	//glm::vec2 hitpos;

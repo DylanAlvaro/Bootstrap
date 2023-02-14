@@ -81,7 +81,6 @@ void PhysicsApp::update(float deltaTime)
 	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 
 	
-
 	if (cueBall->GetVelocity() == glm::vec2(0))
 	{
 		if (input->isMouseButtonDown(0))
@@ -91,24 +90,16 @@ void PhysicsApp::update(float deltaTime)
 		}
 	}
 
+	std::cout << cueBall->GetVelocity().x << "   " << cueBall->GetVelocity().y << std::endl;
 	if (cueBall->GetVelocity() == glm::vec2(0))
 	{
 		if (input->wasMouseButtonReleased(0))
 		{
 			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
 			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
-			int force = 300;
-			cueBall->ApplyForce(ballDir * glm::vec2(force), cueBall->GetPosition());
+			//int force = 300;
+			cueBall->ApplyForce(ballDir * hitpos, cueBall->GetPosition());
 		}
-	}
-
-	if (cueBall->GetVelocity() == glm::vec2(0) && hasBeenHit == true)
-	{
-		glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
-		glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
-		int force = 300;
-
-		cueBall->ApplyForce(ballDir * glm::vec2(force), cueBall->GetPosition());
 	}
 	
 
@@ -134,13 +125,17 @@ void PhysicsApp::update(float deltaTime)
 	//				{
 	//					m_balls[j]->SetKinematic(true);
 	//
-	//					m_balls[j]->SetPosition(glm::vec2(-20, 50));
+	//					if (hasBeenSunk)
+	//					{
+	//						m_balls[j]->SetPosition(glm::vec2(-20, 50));
+	//					}
 	//				}
 	//
 	//			}
 	//		}
-	//	}
+	//	};
 	//}
+
 	//else
 	//{
 	//	cueBall->SetVelocity(glm::vec2(0, 0));
@@ -361,11 +356,11 @@ void PhysicsApp::DemoStartUp(int num)
 	box5ball1->SetKinematic(true);
 	Circle* box5ball2 = new Circle(glm::vec2(-99.5f, 44), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
 	box5ball2->SetKinematic(true);
-	Circle* pocket5 = new Circle(glm::vec2(95, -56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket5 = new Circle(glm::vec2(93, -56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket5->SetTrigger(true);
 	pocket5->SetKinematic(true);
 
-	Circle* pocket6 = new Circle(glm::vec2(100, 56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket6 = new Circle(glm::vec2(93, 56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket6->SetTrigger(true);
 	pocket6->SetKinematic(true);
 	
@@ -473,7 +468,7 @@ void PhysicsApp::DemoStartUp(int num)
 	m_physicsScene->AddActor(pocket3);
 	m_physicsScene->AddActor(pocket4);
 	m_physicsScene->AddActor(pocket5);
-	//m_physicsScene->AddActor(pocket6);
+	m_physicsScene->AddActor(pocket6);
 	
 	
 	m_physicsScene->AddActor(box1ball1);

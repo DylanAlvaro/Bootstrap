@@ -98,8 +98,8 @@ protected:
 
 	
 
-	float m_linearDrag = 0.6f;
-	float m_angularDrag = 0.6f;
+	float m_linearDrag = 1.f;
+	float m_angularDrag = 1.f;
 
 	bool m_isKinematic;
 	bool m_isTrigger;
