@@ -91,7 +91,7 @@ void PhysicsApp::update(float deltaTime)
 	}
 
 	std::cout << cueBall->GetVelocity().x << "   " << cueBall->GetVelocity().y << std::endl;
-	if (cueBall->GetVelocity() == glm::vec2(0))
+	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
 	{
 		if (input->wasMouseButtonReleased(0))
 		{
