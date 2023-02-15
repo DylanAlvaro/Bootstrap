@@ -128,49 +128,7 @@ void PhysicsApp::update(float deltaTime)
 	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 
 
-	//if (!isWhitePlaced)
-	//{
-	//	int xScreen, yScreen;
-	//	input->getMouseXY(&xScreen, &yScreen);
-	//	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
-	//
-	//	cueBall->SetPosition(worldPos);
-	//
-	//	blackBall->SetKinematic(true);
-	//
-	//	for (int i = 0; i < m_sunkBallStripes.size(); i++)
-	//	{
-	//		m_stripes[i]->SetKinematic(true);
-	//	}
-	//
-	//	for (int i = 0; i < m_sunkBallsSolids.size(); i++)
-	//	{
-	//		m_solids[i]->SetKinematic(true);
-	//	}
-	//
-	//	if (cueBall->GetPosition().x > -100 &&
-	//		cueBall->GetPosition().y > -55)
-	//	{
-	//		if (input->wasKeyReleased(aie::INPUT_KEY_SPACE))
-	//		{
-	//			cueBall->SetPosition(worldPos);
-	//			cueBall->SetVelocity(glm::vec2(0));
-	//			isWhitePlaced = true;
-	//			
-	//			blackBall->SetKinematic(false);
-	//		
-	//			for (int i = 0; i < m_sunkBallsSolids.size(); i++)
-	//			{
-	//				m_solids[i]->SetKinematic(false);
-	//			}
-	//		
-	//			for (int j = 0; j < m_sunkBallStripes.size(); j++)
-	//			{
-	//				m_stripes[j]->SetKinematic(false);
-	//			}
-	//		}
-	//	}
-	//}
+
 
 	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
 	{
