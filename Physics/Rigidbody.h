@@ -85,18 +85,12 @@ protected:
 	glm::vec2 m_localX;
 	glm::vec2 m_localY;
 
-
-
-	
 	float m_mass;
 	float m_kinetic;
 	float m_orientation;
 	float m_angularVelocity;
 	float m_moment;
 	float m_lastOrientation;
-
-
-	
 
 	float m_linearDrag = 1.f;
 	float m_angularDrag = 1.f;

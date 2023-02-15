@@ -23,7 +23,9 @@ public:
 	virtual void draw();
 
 	glm::vec2 ScreenToWorld(glm::vec2 screenPos);
+	glm::vec2 WorldToScreen(glm::vec2 mousePos);
 	void PlayerTurns();
+	void AssignBalls();
 
 
 protected:
@@ -36,6 +38,13 @@ protected:
 	std::vector<PhysicsObject*> m_objects;
 	std::vector<Circle*> m_balls;
 	std::vector<Circle*> m_inHole;
+	std::vector<Circle*> m_sunkBallsSolids;
+	std::vector<Circle*> m_sunkBallStripes;
+	std::vector<Circle*> m_sunkWhite;
+	std::vector<Circle*> m_whiteBall;
+
+	std::vector<Circle*> m_stripes;
+	std::vector<Circle*> m_solids;
 
 	Circle* cueBall;
 	Circle* blackBall;
@@ -52,18 +61,26 @@ protected:
 	float m_cameraX;
 	float m_cameraY;
 
+	float m_bonusTurns = 0;
+
 	bool hasBeenHit = false;
 
+	bool isWhitePlaced = true;
+
 	bool hasBeenSunk;
+	bool m_player1Win = false;
+	bool m_player2Win = false;
+	
 	bool m_isAsleep = false;
 
 	//glm::vec2 hitpos;
 
+
 	int m_playersTurn;
+	int playerSecondGo;
 
 	void OnBall2Check(PhysicsObject* other);
 	void SpawnBalls();
-
 
 
 public:

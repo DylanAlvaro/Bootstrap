@@ -37,8 +37,12 @@ bool PhysicsApp::startup()
 	aie::Gizmos::create(255U, 255U, 65535U, 65535U);
 
 	
+
+
+
 	m_2dRenderer = new aie::Renderer2D();
 
+	m_playersTurn = 0;
 
 	m_font = new aie::Font("./font/consolas.ttf", 32);
 
@@ -48,6 +52,49 @@ bool PhysicsApp::startup()
 	
 	DemoStartUp(1);
 	
+
+	for (auto pockets : m_inHole)
+	{
+		pockets->triggerEnter = [=](PhysicsObject* other)
+		{
+			for (auto balls : m_stripes)
+			{
+				if (other == balls)
+				{
+					m_sunkBallStripes.push_back(balls);
+					std::cout << "stripes" << std::endl;
+				}
+			}
+
+			for (auto balls : m_solids)
+			{
+				if (other == balls )
+				{
+					m_sunkBallsSolids.push_back(balls);
+					std::cout << "solids" << std::endl;
+				}
+			}
+
+			if (other == cueBall && m_playersTurn == 2)
+			{
+				//cueBall->SetTrigger(true);
+				cueBall->SetVelocity(glm::vec2(0, 0));
+				cueBall->SetPosition(glm::vec2(-20, 0));
+				m_playersTurn += 2;
+				isWhitePlaced = false;
+			}
+
+			if (other == cueBall && m_playersTurn == 0)
+			{
+				//cueBall->SetTrigger(true);
+				cueBall->SetVelocity(glm::vec2(0, 0));
+				cueBall->SetPosition(glm::vec2(-20, 0));
+				m_playersTurn += 1;
+				isWhitePlaced = false;
+			}
+		};
+
+	}
 	return true;
 }
 
@@ -80,67 +127,140 @@ void PhysicsApp::update(float deltaTime)
 	input->getMouseXY(&xScreen, &yScreen);
 	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 
-	
-	if (cueBall->GetVelocity() == glm::vec2(0))
-	{
-		if (input->isMouseButtonDown(0))
-		{
-			aie::Gizmos::add2DCircle(worldPos, 2, 32, glm::vec4(0, 0, 1, 1));
-			aie::Gizmos::add2DLine(worldPos, cueBall->GetPosition(), glm::vec4(0, 0, 1, 1));
-		}
-	}
 
-	std::cout << cueBall->GetVelocity().x << "   " << cueBall->GetVelocity().y << std::endl;
-	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
-	{
-		if (input->wasMouseButtonReleased(0))
-		{
-			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
-			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
-			//int force = 300;
-			cueBall->ApplyForce(ballDir * hitpos, cueBall->GetPosition());
-		}
-	}
-	
-
-	//for (int i = 0; i < m_balls.size(); i++)
+	//if (!isWhitePlaced)
 	//{
-	//	if (m_balls.at(i)->GetVelocity() == glm::vec2(0, 0))
-	//	{
-	//		glm::vec2 ballDir = glm::normalize(worldPos - m_balls.at(i)->GetPosition());
+	//	int xScreen, yScreen;
+	//	input->getMouseXY(&xScreen, &yScreen);
+	//	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 	//
-	//		m_balls.at(i)->ApplyForce(-ballDir * glm::vec2(0), m_balls.at(i)->GetPosition());
+	//	cueBall->SetPosition(worldPos);
+	//
+	//	blackBall->SetKinematic(true);
+	//
+	//	for (int i = 0; i < m_sunkBallStripes.size(); i++)
+	//	{
+	//		m_stripes[i]->SetKinematic(true);
+	//	}
+	//
+	//	for (int i = 0; i < m_sunkBallsSolids.size(); i++)
+	//	{
+	//		m_solids[i]->SetKinematic(true);
+	//	}
+	//
+	//	if (cueBall->GetPosition().x > -100 &&
+	//		cueBall->GetPosition().y > -55)
+	//	{
+	//		if (input->wasKeyReleased(aie::INPUT_KEY_SPACE))
+	//		{
+	//			cueBall->SetPosition(worldPos);
+	//			cueBall->SetVelocity(glm::vec2(0));
+	//			isWhitePlaced = true;
+	//			
+	//			blackBall->SetKinematic(false);
+	//		
+	//			for (int i = 0; i < m_sunkBallsSolids.size(); i++)
+	//			{
+	//				m_solids[i]->SetKinematic(false);
+	//			}
+	//		
+	//			for (int j = 0; j < m_sunkBallStripes.size(); j++)
+	//			{
+	//				m_stripes[j]->SetKinematic(false);
+	//			}
+	//		}
 	//	}
 	//}
 
-	//for (int i = 0; i < m_inHole.size(); i++)
-	//{
-	//	m_inHole[i]->triggerEnter = [=](PhysicsObject* ballhole)
-	//	{
-	//		if (ballhole = cueBall)
-	//		{
-	//			for (int j = 0; j < m_balls.size(); j++)
-	//			{
-	//				if (ballhole = m_balls[j])
-	//				{
-	//					m_balls[j]->SetKinematic(true);
-	//
-	//					if (hasBeenSunk)
-	//					{
-	//						m_balls[j]->SetPosition(glm::vec2(-20, 50));
-	//					}
-	//				}
-	//
-	//			}
-	//		}
-	//	};
-	//}
+	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
+	{
+		if (input->isMouseButtonDown(0) && isWhitePlaced)
+		{
+			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
+			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
 
-	//else
-	//{
-	//	cueBall->SetVelocity(glm::vec2(0, 0));
-	//	cueBall->SetPosition(glm::vec2(-20, 0));
-	//}
+			if (m_playersTurn == 0)
+			{
+				aie::Gizmos::add2DCircle(worldPos, 2, 32, glm::vec4(1, 1, 0, 1));
+				aie::Gizmos::add2DLine(worldPos, cueBall->GetPosition(), glm::vec4(1, 1, 0, 1));
+			}
+
+			if (m_playersTurn == 1)
+			{
+				aie::Gizmos::add2DCircle(worldPos, 2, 32, glm::vec4(0, 1, 0, 1));
+				aie::Gizmos::add2DLine(worldPos, cueBall->GetPosition(), glm::vec4(0, 1, 0, 1));
+			}
+
+		}
+	}
+
+	//std::cout << cueBall->GetVelocity().x << "   " << cueBall->GetVelocity().y << std::endl;
+	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
+	{
+
+		if (input->wasMouseButtonReleased(0) && isWhitePlaced && m_playersTurn <= 0)
+		{
+			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
+			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
+
+			//int force = 300;
+
+			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(20)), cueBall->GetPosition());
+			m_playersTurn += 1;
+		}
+	}
+
+	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
+	{
+		if (input->wasMouseButtonReleased(0) && isWhitePlaced && m_playersTurn >= 1)
+		{
+			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
+			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
+
+			//int force = 300;
+
+			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(20)), cueBall->GetPosition());
+			m_playersTurn -= 1;
+
+		}
+	}
+
+	if (hasBeenSunk && isWhitePlaced)
+	{
+		hasBeenHit = false;
+
+		if (playerSecondGo == 0)
+		{
+			if (m_playersTurn == 0)
+			{
+				m_playersTurn = 1;
+			}
+
+			if (!m_playersTurn == 1)
+			{
+				m_playersTurn = 2;
+			}
+			if (m_bonusTurns < 1)
+				m_bonusTurns = 0;
+		}
+	}
+		
+
+	for (int i = 0; i < m_sunkBallsSolids.size(); i++)
+	{
+		m_sunkBallsSolids[i]->SetTrigger(true);
+		m_sunkBallsSolids[i]->SetVelocity(glm::vec2(0, 0));
+		m_sunkBallsSolids[i]->SetPosition(glm::vec2(-30 + i * 12, 52));
+		
+	}
+
+	for (int i = 0; i < m_sunkBallStripes.size(); i++)
+	{
+		m_sunkBallStripes[i]->SetTrigger(true);
+		m_sunkBallStripes[i]->SetVelocity(glm::vec2(0, 0));
+		m_sunkBallStripes[i]->SetPosition(glm::vec2(10 + i * 12, 52));
+	
+	}
 }
 
 void PhysicsApp::OnBall2Check(PhysicsObject* other)
@@ -155,16 +275,24 @@ void PhysicsApp::draw()
 
 	// wipe the screen to the background colour
 	clearScreen();
-
-	m_2dRenderer->setCameraPos(m_cameraX, m_cameraY);
-
-	// begin drawing sprites
 	m_2dRenderer->begin();
 
-	
+	//m_2dRenderer->setCameraPos(m_cameraX, m_cameraY);
 
-	// draw your stuff here!
+	// begin drawing sprites
 	
+	m_2dRenderer->drawText(m_font, "solids", 80, 680);
+	m_2dRenderer->drawText(m_font, "stripes", 900, 680);
+
+	if (m_player1Win)
+		m_2dRenderer->drawText(m_font, "Player 1 wins", 50, 50);
+
+	if (m_player2Win)
+		m_2dRenderer->drawText(m_font, "Player 2 wins", 50, 50);
+
+
+
+
 	static float aspectRatio = 16 / 9.f;
 	aie::Gizmos::draw2D(glm::ortho<float>(-100, 100,
 		-100 / aspectRatio, 100 / aspectRatio, -1.0f, 1.0f));
@@ -191,6 +319,28 @@ glm::vec2 PhysicsApp::ScreenToWorld(glm::vec2 screenPos)
 	worldPos.y *= 2.0f * m_extents / (m_aspectRatio * getWindowHeight());
 
 	return worldPos;
+}
+
+glm::vec2 PhysicsApp::WorldToScreen(glm::vec2 worldPos)
+{
+	glm::vec2 screenPos = worldPos;
+	// scale according to our extents
+	screenPos.x /= 2.0f;
+	screenPos.x /= m_extents;
+	screenPos.x *= getWindowWidth();
+
+	screenPos.y /= 2.0f;
+	screenPos.y /= m_extents;
+	screenPos.y *= (m_aspectRatio * getWindowHeight());
+
+	screenPos.x += getWindowWidth() / 2;
+	screenPos.y += getWindowHeight() / 2;
+		
+	return screenPos;
+}
+
+void PhysicsApp::AssignBalls()
+{
 }
 
 void PhysicsApp::DemoStartUp(int num)
@@ -303,22 +453,22 @@ void PhysicsApp::DemoStartUp(int num)
 	m_physicsScene->SetGravity(glm::vec2(0, 0));
 
 	// top left
-	Box* box1 = new Box(glm::vec2(-55, 55.5f), glm::vec2(0), glm::vec2(0), 5.0f, glm::vec2(2.5f, 35), glm::vec4(0.5f, 0.3f, 0, 1), true);
+	Box* box1 = new Box(glm::vec2(-55, 45.5f), glm::vec2(0), glm::vec2(0), 5.0f, glm::vec2(2.5f, 35), glm::vec4(0.5f, 0.3f, 0, 1), true);
 	box1->SetOrientation(DegreeToRadian(90));
-	Circle* box1ball1 = new Circle(glm::vec2(-20, 56), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box1ball1 = new Circle(glm::vec2(-20, 45.5f), glm::vec2(0), 2.0f, 2.5f, glm::vec4(0.5f, 0.3f, 0, 1));
 	box1ball1->SetKinematic(true);
-	Circle* box1ball2 = new Circle(glm::vec2(-90, 56), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box1ball2 = new Circle(glm::vec2(-90, 45.5f), glm::vec2(0), 2.0f, 2.5f, glm::vec4(0.5f, 0.3f, 0, 1));
 	box1ball2->SetKinematic(true);
-	Circle* pocket1 = new Circle(glm::vec2(-10, 56), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket1 = new Circle(glm::vec2(-10, 45), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket1->SetTrigger(true);
 	pocket1->SetKinematic(true);
 
 	// top right
-	Box* box2 = new Box(glm::vec2(40, 55), glm::vec2(0), glm::vec2(0), 5.0f, glm::vec2(2.5f, 40), glm::vec4(0.5f, 0.3f, 0, 1), true);
+	Box* box2 = new Box(glm::vec2(40, 45.5f), glm::vec2(0), glm::vec2(0), 5.0f, glm::vec2(2.5f, 40), glm::vec4(0.5f, 0.3f, 0, 1), true);
 	box2->SetOrientation(DegreeToRadian(90));
-	Circle* box2ball1 = new Circle(glm::vec2(0, 55.5f), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box2ball1 = new Circle(glm::vec2(0, 45.5f), glm::vec2(0), 2.0f, 2.5f, glm::vec4(0.5f, 0.3f, 0, 1));
 	box2ball1->SetKinematic(true);
-	Circle* box2ball2 = new Circle(glm::vec2(80, 55.5f), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box2ball2 = new Circle(glm::vec2(80, 45.5f), glm::vec2(0), 2.0f, 2.5f, glm::vec4(0.5f, 0.3f, 0, 1));
 	box2ball2->SetKinematic(true);
 	
 	Circle* pocket2 = new Circle(glm::vec2(-10, -56), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
@@ -345,22 +495,22 @@ void PhysicsApp::DemoStartUp(int num)
 	Circle* box4ball2 = new Circle(glm::vec2(80, -56), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
 	box4ball2->SetKinematic(true);
 
-	Circle* pocket4 = new Circle(glm::vec2(-100, 56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket4 = new Circle(glm::vec2(-95, 45), glm::vec2(0), 8.0f, 5, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket4->SetTrigger(true);
 	pocket4->SetKinematic(true);
 
 	// left
 	Box* box5 = new Box(glm::vec2(-99.f, 0), glm::vec2(0), glm::vec2(0), 5.0f, glm::vec2(44, 2.5f), glm::vec4(0.5f, 0.3f, 0, 1), true);
 	box5->SetOrientation(DegreeToRadian(90));
-	Circle* box5ball1 = new Circle(glm::vec2(-99.5f, -44), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box5ball1 = new Circle(glm::vec2(-99.5f, -44), glm::vec2(0), 2.5f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
 	box5ball1->SetKinematic(true);
-	Circle* box5ball2 = new Circle(glm::vec2(-99.5f, 44), glm::vec2(0), 2.0f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
+	Circle* box5ball2 = new Circle(glm::vec2(-99.5f, 44), glm::vec2(0), 2.5f, 3, glm::vec4(0.5f, 0.3f, 0, 1));
 	box5ball2->SetKinematic(true);
 	Circle* pocket5 = new Circle(glm::vec2(93, -56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket5->SetTrigger(true);
 	pocket5->SetKinematic(true);
 
-	Circle* pocket6 = new Circle(glm::vec2(93, 56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket6 = new Circle(glm::vec2(89, 45), glm::vec2(0), 8.0f, 7, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket6->SetTrigger(true);
 	pocket6->SetKinematic(true);
 	
@@ -373,10 +523,8 @@ void PhysicsApp::DemoStartUp(int num)
 	box6ball2->SetKinematic(true);
 
 
-	pocket1->triggerEnter = [=](PhysicsObject* other) { std::cout << "Enter:" << other << std::endl; };
-	pocket1->triggerExit = [=](PhysicsObject* other) { std::cout << "Exit:" << other << std::endl; };
 
-	
+
 
 
 	// white ball
@@ -388,35 +536,38 @@ void PhysicsApp::DemoStartUp(int num)
 	Circle* blackB = new Circle(glm::vec2(40, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1) ); // 4th
 	blackBall = blackB;
 
-	Circle* ball1 = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); //1st // Half
-	Circle* ball2 = new Circle(glm::vec2(30, 5), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 2nd // Half
-	Circle* ball3 =  new Circle(glm::vec2(30, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1) ); // 3rd // Whole
-	Circle* ball4 =  new Circle(glm::vec2(40, -10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 5th // Half
-	Circle* ball5 =  new Circle(glm::vec2(40, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 6th // Whole
-	Circle* ball6 =  new Circle(glm::vec2(50, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 7th // Whole
-	Circle* ball7 =  new Circle(glm::vec2(50, 5), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 8th // Half
-	Circle* ball8 =  new Circle(glm::vec2(50, -15), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 9th // Half
-	Circle* ball9 =  new Circle(glm::vec2(50, 15), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 10th // Whole
-	Circle* ball10 =  new Circle(glm::vec2(60, 20), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 11th // Half
-	Circle* ball11 =  new Circle(glm::vec2(60, -10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 12th // Whole
-	Circle* ball12 =  new Circle(glm::vec2(60, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 13th // Whole
-	Circle* ball13 =  new Circle(glm::vec2(60, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 14th // Whole
-	Circle* ball14 =  new Circle(glm::vec2(60, -20), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 15th // Half
+	Circle* stripeBall1 = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); //1st // Half
+	Circle* stripeBall2 = new Circle(glm::vec2(30, 5), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 2nd // Half
+	Circle* solids1 =  new Circle(glm::vec2(30, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1) ); // 3rd // Whole
+	Circle* stripeBall3 =  new Circle(glm::vec2(40, -10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 5th // Half
+	Circle* solids2 =  new Circle(glm::vec2(40, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 6th // Whole
+	Circle* solids3 =  new Circle(glm::vec2(50, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 7th // Whole
+	Circle* stripeBall4 =  new Circle(glm::vec2(50, 5), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 8th // Half
+	Circle* stripeBall5 =  new Circle(glm::vec2(50, -15), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 9th // Half
+	Circle* solids4 =  new Circle(glm::vec2(50, 15), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 10th // Whole
+	Circle* stripeBall6 =  new Circle(glm::vec2(60, 20), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 11th // Half
+	Circle* solids5 =  new Circle(glm::vec2(60, -10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 12th // Whole
+	Circle* solids6 =  new Circle(glm::vec2(60, 10), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 13th // Whole
+	Circle* solids7 =  new Circle(glm::vec2(60, 0), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1)); // 14th // Whole
+	Circle* stripeBall7 =  new Circle(glm::vec2(60, -20), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0)); // 15th // Half
 	
-	m_balls.push_back(ball1);
-	m_balls.push_back(ball2);
-	m_balls.push_back(ball3);
-	m_balls.push_back(ball4);
-	m_balls.push_back(ball5);
-	m_balls.push_back(ball6);
-	m_balls.push_back(ball7);
-	m_balls.push_back(ball8);
-	m_balls.push_back(ball9);
-	m_balls.push_back(ball10);
-	m_balls.push_back(ball11);
-	m_balls.push_back(ball12);
-	m_balls.push_back(ball13);
-	m_balls.push_back(ball14);
+	m_whiteBall.push_back(cue);
+
+	m_stripes.push_back(stripeBall1);
+	m_stripes.push_back(stripeBall2);
+	m_stripes.push_back(stripeBall3);
+	m_stripes.push_back(stripeBall4);
+	m_stripes.push_back(stripeBall5);
+	m_stripes.push_back(stripeBall6);
+	m_stripes.push_back(stripeBall7);
+	
+	m_solids.push_back(solids1);
+	m_solids.push_back(solids2);
+	m_solids.push_back(solids3);
+	m_solids.push_back(solids4);
+	m_solids.push_back(solids5);
+	m_solids.push_back(solids6);
+	m_solids.push_back(solids7);
 
 	m_inHole.push_back(pocket1);
 	m_inHole.push_back(pocket2);
@@ -435,20 +586,21 @@ void PhysicsApp::DemoStartUp(int num)
 	//
 	//}
 
-	m_physicsScene->AddActor(ball1);
-	m_physicsScene->AddActor(ball2);
-	m_physicsScene->AddActor(ball3);
-	m_physicsScene->AddActor(ball4);
-	m_physicsScene->AddActor(ball5);
-	m_physicsScene->AddActor(ball6);
-	m_physicsScene->AddActor(ball7);
-	m_physicsScene->AddActor(ball8);
-	m_physicsScene->AddActor(ball9);
-	m_physicsScene->AddActor(ball10);
-	m_physicsScene->AddActor(ball11);
-	m_physicsScene->AddActor(ball12);
-	m_physicsScene->AddActor(ball13);
-	m_physicsScene->AddActor(ball14);
+	m_physicsScene->AddActor(solids1);
+	m_physicsScene->AddActor(solids2);
+	m_physicsScene->AddActor(solids3);
+	m_physicsScene->AddActor(solids4);
+	m_physicsScene->AddActor(solids5);
+	m_physicsScene->AddActor(solids6);
+	m_physicsScene->AddActor(solids7);
+
+	m_physicsScene->AddActor(stripeBall1);
+	m_physicsScene->AddActor(stripeBall2);
+	m_physicsScene->AddActor(stripeBall3);
+	m_physicsScene->AddActor(stripeBall4);
+	m_physicsScene->AddActor(stripeBall5);
+	m_physicsScene->AddActor(stripeBall6);
+	m_physicsScene->AddActor(stripeBall7);
 
 	// top 2 boxes
 	m_physicsScene->AddActor(box1);
