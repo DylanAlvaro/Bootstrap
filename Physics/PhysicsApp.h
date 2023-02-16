@@ -61,11 +61,13 @@ protected:
 	float m_cameraX;
 	float m_cameraY;
 
-	float m_bonusTurns = 0;
+	float m_ExtraMove = 0;
 
 	bool hasBeenHit = false;
 
-	bool isWhitePlaced = true;
+	bool isWhiteBallPlaced = true;
+
+	bool hasBlackSunk = false;
 
 	bool hasBeenSunk;
 	bool m_player1Win = false;
@@ -77,10 +79,10 @@ protected:
 
 
 	int m_playersTurn;
-	int playerSecondGo;
-
 	void OnBall2Check(PhysicsObject* other);
 	void SpawnBalls();
+
+	void HasBeenSunk();
 
 
 public:

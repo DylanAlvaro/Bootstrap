@@ -75,22 +75,29 @@ bool PhysicsApp::startup()
 				}
 			}
 
-			if (other == cueBall && m_playersTurn == 2)
+			if (other == cueBall && m_playersTurn <= 0)
 			{
 				//cueBall->SetTrigger(true);
-				cueBall->SetVelocity(glm::vec2(0, 0));
-				cueBall->SetPosition(glm::vec2(-20, 0));
-				m_playersTurn += 2;
-				isWhitePlaced = false;
+				HasBeenSunk();
+				m_playersTurn += 1;
+				std::cout << "extra turn p1" << std::endl;
+				isWhiteBallPlaced = false;
+			}
+			
+			if (other == cueBall && m_playersTurn >= 1)
+			{
+				//cueBall->SetTrigger(true);
+				HasBeenSunk();
+				std::cout << "extra turn p2" << std::endl;
+				m_playersTurn -= 1;
+				isWhiteBallPlaced = false;
 			}
 
-			if (other == cueBall && m_playersTurn == 0)
+			if (other == blackBall && m_playersTurn <= 0)
 			{
-				//cueBall->SetTrigger(true);
-				cueBall->SetVelocity(glm::vec2(0, 0));
-				cueBall->SetPosition(glm::vec2(-20, 0));
-				m_playersTurn += 1;
-				isWhitePlaced = false;
+				blackBall->SetTrigger(true);
+				blackBall->SetPosition(glm::vec2(-30, 52));
+				hasBlackSunk = true;
 			}
 		};
 
@@ -127,23 +134,66 @@ void PhysicsApp::update(float deltaTime)
 	input->getMouseXY(&xScreen, &yScreen);
 	glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 
-
+	//if (!isWhiteBallPlaced)
+	//{
+	//	int xScreen, yScreen;
+	//	input->getMouseXY(&xScreen, &yScreen);
+	//	glm::vec2 worldPos = WorldToScreen(glm::vec2(xScreen, yScreen));
+	//
+	//	cueBall->SetPosition(worldPos);
+	//
+	//	blackBall->SetKinematic(true);
+	//
+	//	for (int i = 0; i < m_sunkBallStripes.size(); i++)
+	//	{
+	//		m_stripes[i]->SetKinematic(true);
+	//	}
+	//
+	//	for (int i = 0; i < m_sunkBallsSolids.size(); i++)
+	//	{
+	//		m_solids[i]->SetKinematic(true);
+	//	}
+	//
+	//	if (cueBall->GetPosition().x > -100 && cueBall->GetPosition().x < -50 && 
+	//		cueBall->GetPosition().y > -55 && cueBall->GetPosition().y < -55)
+	//	{
+	//		if (input->wasKeyReleased(aie::INPUT_KEY_SPACE) && m_playersTurn == 0)
+	//		{
+	//			cueBall->SetPosition(worldPos);
+	//			cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f;
+	//			isWhiteBallPlaced = true;
+	//			m_playersTurn += 1;
+	//			
+	//			blackBall->SetKinematic(false);
+	//		
+	//			for (int i = 0; i < m_sunkBallsSolids.size(); i++)
+	//			{
+	//				m_solids[i]->SetKinematic(false);
+	//			}
+	//		
+	//			for (int j = 0; j < m_sunkBallStripes.size(); j++)
+	//			{
+	//				m_stripes[j]->SetKinematic(false);
+	//			}
+	//		}
+	//	}
+	//}
 
 
 	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
 	{
-		if (input->isMouseButtonDown(0) && isWhitePlaced)
+		if (input->isMouseButtonDown(0) && isWhiteBallPlaced)
 		{
 			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
 			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
 
-			if (m_playersTurn == 0)
+			if (m_playersTurn <= 0)
 			{
 				aie::Gizmos::add2DCircle(worldPos, 2, 32, glm::vec4(1, 1, 0, 1));
 				aie::Gizmos::add2DLine(worldPos, cueBall->GetPosition(), glm::vec4(1, 1, 0, 1));
 			}
 
-			if (m_playersTurn == 1)
+			if (m_playersTurn >= 1)
 			{
 				aie::Gizmos::add2DCircle(worldPos, 2, 32, glm::vec4(0, 1, 0, 1));
 				aie::Gizmos::add2DLine(worldPos, cueBall->GetPosition(), glm::vec4(0, 1, 0, 1));
@@ -156,50 +206,61 @@ void PhysicsApp::update(float deltaTime)
 	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
 	{
 
-		if (input->wasMouseButtonReleased(0) && isWhitePlaced && m_playersTurn <= 0)
+		if (input->wasMouseButtonReleased(0) && isWhiteBallPlaced && m_playersTurn <= 0)
 		{
 			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
 			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
 
 			//int force = 300;
 
-			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(20)), cueBall->GetPosition());
+			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(10)), cueBall->GetPosition());
 			m_playersTurn += 1;
+
+			if (m_ExtraMove > 0)
+			{
+				m_ExtraMove--;
+			}
 		}
 	}
 
 	if (cueBall->GetVelocity().x <= 0.001f && cueBall->GetVelocity().y <= 0.001f)
 	{
-		if (input->wasMouseButtonReleased(0) && isWhitePlaced && m_playersTurn >= 1)
+		if (input->wasMouseButtonReleased(0) && isWhiteBallPlaced && m_playersTurn >= 1)
 		{
 			glm::vec2 hitpos = cueBall->GetPosition().x - worldPos - cueBall->GetPosition().y;
 			glm::vec2 ballDir = glm::normalize(cueBall->GetPosition() - ScreenToWorld(worldPos));
 
 			//int force = 300;
 
-			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(20)), cueBall->GetPosition());
+			cueBall->ApplyForce(ballDir * hitpos * (glm::vec2(10)), cueBall->GetPosition());
 			m_playersTurn -= 1;
+
+			if (m_ExtraMove > 0)
+			{
+				m_ExtraMove--;
+			}
 
 		}
 	}
 
-	if (hasBeenSunk && isWhitePlaced)
+
+	if (m_playersTurn && hasBeenSunk && isWhiteBallPlaced)
 	{
 		hasBeenHit = false;
 
-		if (playerSecondGo == 0)
+		if (m_ExtraMove == 0)
 		{
-			if (m_playersTurn == 0)
+			if (m_playersTurn <= 0)
 			{
 				m_playersTurn = 1;
 			}
 
-			if (!m_playersTurn == 1)
+			if (m_playersTurn >= 1)
 			{
 				m_playersTurn = 2;
 			}
-			if (m_bonusTurns < 1)
-				m_bonusTurns = 0;
+			if (m_ExtraMove < 1)
+				m_ExtraMove = 0;
 		}
 	}
 		
@@ -209,6 +270,7 @@ void PhysicsApp::update(float deltaTime)
 		m_sunkBallsSolids[i]->SetTrigger(true);
 		m_sunkBallsSolids[i]->SetVelocity(glm::vec2(0, 0));
 		m_sunkBallsSolids[i]->SetPosition(glm::vec2(-30 + i * 12, 52));
+		hasBeenSunk = true;
 		
 	}
 
@@ -217,6 +279,7 @@ void PhysicsApp::update(float deltaTime)
 		m_sunkBallStripes[i]->SetTrigger(true);
 		m_sunkBallStripes[i]->SetVelocity(glm::vec2(0, 0));
 		m_sunkBallStripes[i]->SetPosition(glm::vec2(10 + i * 12, 52));
+		hasBeenSunk = true;
 	
 	}
 }
@@ -242,11 +305,17 @@ void PhysicsApp::draw()
 	m_2dRenderer->drawText(m_font, "solids", 80, 680);
 	m_2dRenderer->drawText(m_font, "stripes", 900, 680);
 
-	if (m_player1Win)
-		m_2dRenderer->drawText(m_font, "Player 1 wins", 50, 50);
 
-	if (m_player2Win)
+	if (hasBlackSunk && m_playersTurn <= 0)
+	{
+		m_2dRenderer->drawText(m_font, "Player 1 wins", 50, 50);
+	}
+
+
+	if (hasBlackSunk && m_playersTurn >= 1)
+	{
 		m_2dRenderer->drawText(m_font, "Player 2 wins", 50, 50);
+	}
 
 
 
@@ -491,10 +560,10 @@ void PhysicsApp::DemoStartUp(int num)
 	
 
 	// black ball
-	Circle* blackB = new Circle(glm::vec2(40, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1) ); // 4th
+	Circle* blackB = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 0, 0, 1) ); // 4th
 	blackBall = blackB;
 
-	Circle* stripeBall1 = new Circle(glm::vec2(20, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); //1st // Half
+	Circle* stripeBall1 = new Circle(glm::vec2(40, 0), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); //1st // Half
 	Circle* stripeBall2 = new Circle(glm::vec2(30, 5), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 2nd // Half
 	Circle* solids1 =  new Circle(glm::vec2(30, -5), glm::vec2(0), 4.0f, 4, glm::vec4(0, 1, 0, 1) ); // 3rd // Whole
 	Circle* stripeBall3 =  new Circle(glm::vec2(40, -10), glm::vec2(0), 4.0f, 4, glm::vec4(1, 1, 0, 0) ); // 5th // Half
@@ -534,15 +603,10 @@ void PhysicsApp::DemoStartUp(int num)
 	m_inHole.push_back(pocket5);
 	m_inHole.push_back(pocket6);
 
-	//for (int i = 0; i < m_objects.size(); i++)
-	//{
-	//	if(Circle* ball = dynamic_cast<Circle*>(m_objects.at(i)));
-	//	{
-	//		m_balls.push_back(ball1);
-	//
-	//	}
-	//
-	//}
+	m_physicsScene->AddActor(cue);
+	m_physicsScene->AddActor(blackB);
+
+
 
 	m_physicsScene->AddActor(solids1);
 	m_physicsScene->AddActor(solids2);
@@ -600,8 +664,6 @@ void PhysicsApp::DemoStartUp(int num)
 	m_physicsScene->AddActor(box6ball2);
 
 
-	m_physicsScene->AddActor(cue);
-	m_physicsScene->AddActor(blackB);
 	
 #endif // PoolTable
 
@@ -687,6 +749,12 @@ void PhysicsApp::DemoStartUp(int num)
 void PhysicsApp::SpawnBalls()
 {
 
+}
+
+void PhysicsApp::HasBeenSunk()
+{
+	cueBall->SetVelocity(glm::vec2(0.001f, 0.001f));
+	cueBall->SetPosition(glm::vec2(-20, 0));
 }
 
 void PhysicsApp::DemoUpdates(aie::Input* input, float dt)
