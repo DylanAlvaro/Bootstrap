@@ -62,6 +62,7 @@ public:
 	float GetAngularDrag() { return m_angularDrag; }
 
 
+
 	bool IsTrigger() { return m_isTrigger; }
 	
 	

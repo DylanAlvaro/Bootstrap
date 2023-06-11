@@ -14,6 +14,8 @@ public:
 	glm::vec2 GetExtents() const { return m_extents; }
 	glm::vec2 GetLocalX()const { return m_localX; }
 	glm::vec2 GetLocalY()const { return m_localY; }
+
+	void SetColor(glm::vec4 color) { m_color = color; }
 	
 	float GetHeight() const { return m_extents.y * 2; }
 	float GetWidth()  const { return m_extents.x * 2; }

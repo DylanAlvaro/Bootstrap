@@ -24,8 +24,9 @@ public:
 
 	glm::vec2 ScreenToWorld(glm::vec2 screenPos);
 	glm::vec2 WorldToScreen(glm::vec2 mousePos);
-	void PlayerTurns();
-	void AssignBalls();
+	bool HasPlayerTurnEnded();
+	void CheckBallHit();
+	void CheckHit();
 
 
 protected:
@@ -49,6 +50,8 @@ protected:
 	Circle* cueBall;
 	Circle* blackBall;
 	Box* staticBox;
+	Box* m_trigger;
+	glm::vec4 m_triggerColor = glm::vec4(0, 0, 0, 1);
 
 	glm::vec2 m_position;
 	
@@ -64,16 +67,22 @@ protected:
 	float m_ExtraMove = 0;
 
 	bool hasBeenHit = false;
+	glm::vec2 m_hitForce;
 
 	bool isWhiteBallPlaced = true;
 
 	bool hasBlackSunk = false;
 
-	bool hasBeenSunk;
+	bool hasBeenSunk = false;
 	bool m_player1Win = false;
 	bool m_player2Win = false;
+	bool sunkCheck = false;
 	
 	bool m_isAsleep = false;
+	bool m_player1turn = true;
+	bool m_player2turn = true;
+	float m_player1Score = 0;
+	float m_player2Score = 0;
 
 	//glm::vec2 hitpos;
 

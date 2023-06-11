@@ -2,7 +2,8 @@
 #include "Gizmos.h"
 #include "Rigidbody.h"
 
-Box::Box(glm::vec2 position, glm::vec2 velocity, glm::vec2 orientation, float mass, glm::vec2 extends, glm::vec4 color, bool isKinematic) : Rigidbody(BOX, position, velocity, 0, mass)
+Box::Box(glm::vec2 position, glm::vec2 velocity, glm::vec2 orientation, 
+	float mass, glm::vec2 extends, glm::vec4 color, bool isKinematic) : Rigidbody(BOX, position, velocity, 0, mass)
 {
 	m_position = position;
 	m_color = color;
