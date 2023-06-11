@@ -27,6 +27,33 @@ void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 {
 	CalculateAxes();
 
+	m_lastPosition = m_position;
+	m_lastOrientation = m_orientation;
+
+
+	m_velocity -= m_velocity * m_linearDrag * timeStep;
+	m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
+
+	if (length(m_velocity) < MIN_LINEAR_THRESHOLD)
+	{
+		m_velocity = glm::vec2(0, 0);
+	}
+	if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD)
+	{
+		m_angularVelocity = 0;
+	}
+
+	if (m_angularVelocity == 0 && m_velocity == glm::vec2(0, 0))
+	{
+		m_isAsleep = true;
+	}
+
+
+	m_position += m_velocity * timeStep;
+	ApplyForce(gravity * GetMass() * timeStep, glm::vec2(0));
+
+	m_orientation += m_angularVelocity * timeStep;
+
 	if (m_isTrigger)
 	{
 		for (auto it = m_objectsInside.begin(); it != m_objectsInside.end(); it++)
@@ -51,32 +78,6 @@ void Rigidbody::FixedUpdate(glm::vec2 gravity, float timeStep)
 		return;
 	}
 
-	m_lastPosition = m_position;
-	m_lastOrientation = m_orientation;
-
-
-	m_velocity -= m_velocity * m_linearDrag * timeStep;
-	m_angularVelocity -= m_angularVelocity * m_angularDrag * timeStep;
-
-	if (length(m_velocity) < MIN_LINEAR_THRESHOLD)
-	{
-		m_velocity = glm::vec2(0, 0);
-	}
-	if (abs(m_angularVelocity) < MIN_ANGULAR_THRESHOLD) 
-	{
-		m_angularVelocity = 0;
-	}
-
-	if (m_angularVelocity == 0 && m_velocity == glm::vec2(0, 0))
-	{
-		m_isAsleep = true;
-	}
-	
-
-	m_position += m_velocity * timeStep;
-	ApplyForce(gravity * GetMass() * timeStep, glm::vec2(0));
-
-	m_orientation += m_angularVelocity * timeStep;
 }
 
 void Rigidbody::ApplyForce(glm::vec2 force, glm::vec2 pos)
