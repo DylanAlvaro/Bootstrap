@@ -3,14 +3,13 @@
 #include <glm/glm.hpp>
 #include <list>
 #include <functional>
+#include "Demo.h"
 
 
 class Rigidbody : public PhysicsObject
 {
 public:
 
-	const int MIN_LINEAR_THRESHOLD = 0.1f;
-	const int MIN_ANGULAR_THRESHOLD = 0.01f;
 
 	Rigidbody(ShapeType shapeID, glm::vec2 position,
 		glm::vec2 velocity, float orientation, float mass);
@@ -27,12 +26,15 @@ public:
 	glm::vec2 GetPosition() const { return m_position; }
 	float GetOrientation()  { return m_orientation; }
 	float GetAngularVelocity() { return m_angularVelocity; }
+	void SetAngularVelocity(float angVel) { m_angularVelocity = angVel; }
 	glm::vec2 GetVelocity() { return m_velocity; }
 	float GetMass()  { return m_isKinematic ? INT_MAX : m_mass; }
 	float GetMoment() { return m_isKinematic ? INT_MAX : m_moment; }
-	virtual float GetKineticEnergy();
+	float GetKineticEnergy();
 	float GetPotentialEnergy();
 	bool GetTrigger() { return m_isTrigger; }
+	float GetLinearDrag() { return m_linearDrag; }
+	float GetAngularDrag() { return m_angularDrag; }
 
 	float GetElasticity() { return m_elasticity; }
 
@@ -58,12 +60,10 @@ public:
 	bool IsKinematic() { return m_isKinematic; }
 	void SetElasticity(float elasticity) { m_elasticity = elasticity; }
 	void SetTrigger(bool state) { m_isTrigger = state; }
-	float GetLinearDrag() { return m_linearDrag; }
-	float GetAngularDrag() { return m_angularDrag; }
-
+	void SetLinearDrag(float linearDrag) { m_linearDrag = linearDrag; }
+	void SetAngularDrag(float angularDrag) { m_angularDrag = angularDrag; }
 
 	bool IsTrigger() { return m_isTrigger; }
-	
 	
 	void TriggerEnter(PhysicsObject* actor2);
 
@@ -92,8 +92,8 @@ protected:
 	float m_moment;
 	float m_lastOrientation;
 
-	float m_linearDrag = 1.f;
-	float m_angularDrag = 1.f;
+	float m_linearDrag = 1.0f;
+	float m_angularDrag = 1.0f;
 
 	bool m_isKinematic;
 	bool m_isTrigger;

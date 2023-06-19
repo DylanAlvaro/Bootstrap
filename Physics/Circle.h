@@ -23,6 +23,7 @@ public:
 protected:
     float m_radius;
     glm::vec4 m_color;
+    
     bool m_isPocket = false;
     bool m_isStripe = false;
     bool m_isPlayer1s = false;

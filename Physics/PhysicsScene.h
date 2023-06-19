@@ -23,13 +23,13 @@ public:
 	static glm::vec2 GetGravity() { return m_gravity; }
 	float GetTimeStep() { return m_timeStep; }
 	glm::vec2 GetPosition() const { return m_position; }
+	float GetTotalEnergy();
 
 	//Setters
 	void SetGravity(const glm::vec2 gravity) { m_gravity = gravity; }
 	void SetTimeStep(const float timeStep) { m_timeStep = timeStep; }
 
 
-	virtual float GetTotalEnergy();
 
 	void CheckForCollision();
 
