@@ -49,6 +49,9 @@ protected:
 
 	Circle* cueBall;
 	Circle* blackBall;
+	Circle* stripes;
+	Circle* solids;
+
 	Box* staticBox;
 	Box* m_trigger;
 	glm::vec4 m_triggerColor = glm::vec4(0, 0, 0, 1);

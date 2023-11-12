@@ -94,7 +94,7 @@ void PhysicsApp::update(float deltaTime)
 							if (!m_balls[j]->GetSunkBallCheck() && m_player1turn)
 							{
 								m_ExtraMove++;
-								m_player1turn = false;
+								m_player2turn = true;
 							}
 
 							m_balls[j]->SetKinematic(true);
@@ -147,10 +147,11 @@ void PhysicsApp::update(float deltaTime)
 										for (int x = 0; x < m_solids.size(); x++)
 										{
 											hasBeenSunk = true;
+											m_solids[x]->SetSunkBallCheck(false);
 										}
 
 									}
-									if (!m_player1turn)
+									if (m_player2turn)
 									{
 										for (int b = 0; b < m_solids.size(); b++)
 										{
@@ -216,8 +217,16 @@ void PhysicsApp::update(float deltaTime)
 		input->getMouseXY(&xScreen, &yScreen);
 		glm::vec2 worldPos = ScreenToWorld(glm::vec2(xScreen, yScreen));
 		cueBall->SetPosition(worldPos);
+		
 
 		blackBall->SetKinematic(true);
+		cueBall->SetKinematic(false);
+		
+		for (int i = 0; i < m_stripes.size(); i++)
+			m_stripes[i]->SetKinematic(true);
+
+		for (int j = 0; j < m_solids.size(); j++)
+			m_solids[j]->SetKinematic(true);
 
 		if (cueBall->GetPosition().x > -80 &&
 			cueBall->GetPosition().x < -25 &&
@@ -230,7 +239,7 @@ void PhysicsApp::update(float deltaTime)
 				cueBall->SetVelocity(glm::vec2(0));
 				isWhiteBallPlaced = true;
 
-				blackBall->SetKinematic(false);
+				blackBall->SetKinematic(true);
 
 				for (int i = 0; i < m_stripes.size(); i++)
 					m_stripes[i]->SetKinematic(false);
@@ -256,11 +265,11 @@ void PhysicsApp::update(float deltaTime)
 		{
 			if (m_player1turn)
 			{
-				m_player1turn = false;
+				m_player1turn = true;
 				sunkCheck = true;
 			}
 
-			if (!m_player1turn && !sunkCheck)
+			if (m_player2turn && !sunkCheck)
 			{
 				m_player1turn = true;
 			}
@@ -592,22 +601,22 @@ void PhysicsApp::DemoStartUp(int num)
 	pocket2->SetKinematic(true);
 	m_physicsScene->AddActor(pocket2);
 
-	Circle* pocket3 = new Circle(glm::vec2(-100, -56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket3 = new Circle(glm::vec2(-100, -56), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket3->SetTrigger(true);
 	pocket3->SetKinematic(true);
 	m_physicsScene->AddActor(pocket3);
 
-	Circle* pocket4 = new Circle(glm::vec2(-95, 45), glm::vec2(0), 8.0f, 5, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket4 = new Circle(glm::vec2(-95, 45), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket4->SetTrigger(true);
 	pocket4->SetKinematic(true);
 	m_physicsScene->AddActor(pocket4);
 
-	Circle* pocket5 = new Circle(glm::vec2(93, -56), glm::vec2(0), 8.0f, 10, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket5 = new Circle(glm::vec2(93, -56), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket5->SetTrigger(true);
 	pocket5->SetKinematic(true);
 	m_physicsScene->AddActor(pocket5);
 
-	Circle* pocket6 = new Circle(glm::vec2(89, 45), glm::vec2(0), 8.0f, 7, glm::vec4(0.2f, 0.2f, 0.2f, 1));
+	Circle* pocket6 = new Circle(glm::vec2(89, 45), glm::vec2(0), 8.0f, 6, glm::vec4(0.2f, 0.2f, 0.2f, 1));
 	pocket6->SetTrigger(true);
 	pocket6->SetKinematic(true);
 	m_physicsScene->AddActor(pocket6);
