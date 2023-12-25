@@ -239,7 +239,7 @@ void PhysicsApp::update(float deltaTime)
 				cueBall->SetVelocity(glm::vec2(0));
 				isWhiteBallPlaced = true;
 
-				blackBall->SetKinematic(true);
+				blackBall->SetKinematic(false);
 
 				for (int i = 0; i < m_stripes.size(); i++)
 					m_stripes[i]->SetKinematic(false);
